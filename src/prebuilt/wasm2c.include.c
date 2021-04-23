@@ -23,7 +23,7 @@ const char SECTION_NAME(declarations)[] =
 "       ? ((t)table.data[x].func)(__VA_ARGS__)           \\\n"
 "       : TRAP(CALL_INDIRECT))\n"
 "\n"
-"#if WASM_RT_MEMCHECK_SIGNAL_HANDLER\n"
+"#if defined(WASM_GUARDPAGE_MODEL)\n"
 "#define MEMCHECK(mem, a, t)\n"
 "#else\n"
 "#define MEMCHECK(mem, a, t)  \\\n"
