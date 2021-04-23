@@ -839,6 +839,8 @@ void CWriter::WriteSandboxStruct() {
   Write("typedef struct wasm2c_sandbox_t {", Newline());
   Indent(2);
 
+  Write("wasm_sandbox_wasi_data wasi_data;", Newline());
+
   WriteMemories();
   WriteTables();
 
@@ -1102,6 +1104,7 @@ void CWriter::WriteDataInitializers() {
     ++data_segment_index;
   }
 
+  Write("sbx->wasi_data.heap_memory = &(sbx->", ExternalRef(memory->name), ");", Newline());
   Write(CloseBrace(), Newline());
 }
 
@@ -1222,6 +1225,7 @@ void CWriter::WriteInit() {
   Write("init_globals(sbx);", Newline());
   Write("init_memory(sbx);", Newline());
   Write("init_table(sbx);", Newline());
+  Write("wasm_rt_init_wasi(&(sbx->wasi_data));", Newline());
   for (Var* var : module_->starts) {
     Write(ExternalRef(module_->GetFunc(*var)->name), "();", Newline());
   }
