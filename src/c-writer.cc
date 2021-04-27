@@ -1210,9 +1210,11 @@ void CWriter::WriteCallbackAddRemove() {
     }
     Write(OpenBrace());
     {
-      Write("if (i >= sbx->w2c___indirect_function_table.size) ", OpenBrace());
+      assert(module_->tables.size() == 1);
+      const Table* table = module_->tables[0];
+      Write("if (i >= sbx->", ExternalRef(table->name), ".size) ", OpenBrace());
       {
-        Write("wasm_rt_expand_table(&(sbx->w2c___indirect_function_table));", Newline());
+        Write("wasm_rt_expand_table(&(sbx->", ExternalRef(table->name), "));", Newline());
       }
       Write(CloseBrace(), Newline());
 
@@ -1659,8 +1661,8 @@ void CWriter::Write(const ExprList& exprs) {
         Memory* memory = module_->memories[module_->GetMemoryIndex(
             cast<MemoryGrowExpr>(&expr)->memidx)];
 
-        Write(StackVar(0), " = wasm_rt_grow_memory(", ExternalPtr(memory->name),
-              ", ", StackVar(0), ");", Newline());
+        Write(StackVar(0), " = wasm_rt_grow_memory((&sbx->", ExternalRef(memory->name),
+              "), ", StackVar(0), ");", Newline());
         break;
       }
 
