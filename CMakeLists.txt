@@ -351,8 +351,35 @@ set(WABT_LIBRARY_SRC
 
 add_library(wabt STATIC ${WABT_LIBRARY_SRC})
 
+find_program(WASI_CLANG++ "/opt/wasi-sdk/bin/clang++")
+
+if(!WASI_CLANG++)
+  message(
+    FATAL_ERROR
+      "Require clang with support for target 'wasm32-wasi' to build the WASM module"
+    )
+endif()
+
+set(LIBC_MAIN_SRC "${CMAKE_SOURCE_DIR}/wasm2c/wasm2c_libc_gen/libc_main.cpp")
+set(LIBC_MAIN_SRC_OUT_WASM libc.wasm)
+set(LIBC_MAIN_SRC_OUT_C libc_wasm.c)
+
+add_custom_command(OUTPUT ${LIBC_MAIN_SRC_OUT_C}
+                   DEPENDS wasm2c ${LIBC_MAIN_SRC}
+                   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                   COMMAND ${WASI_CLANG++} -Wl,--export-all ${LIBC_MAIN_SRC} -o ${LIBC_MAIN_SRC_OUT_WASM}
+                   COMMAND ${CMAKE_BINARY_DIR}/wasm2c
+                           -n libc
+                           -o ${LIBC_MAIN_SRC_OUT_C}
+                           ${LIBC_MAIN_SRC_OUT_WASM}
+                   COMMENT "Compiling empty C file to get libc contents")
+
+add_custom_target(libc_main_gen ALL DEPENDS ${LIBC_MAIN_SRC_OUT_C})
+
 IF (NOT WIN32)
-  add_library(wasm-rt-impl STATIC SHARED wasm2c/wasm-rt-impl.c wasm2c/wasm-rt-os-unix.c wasm2c/wasm-rt-os-win.c wasm2c/wasm-rt-wasi.c)
+  add_library(wasm-rt-impl STATIC SHARED wasm2c/wasm-rt-impl.c wasm2c/wasm-rt-os-unix.c wasm2c/wasm-rt-os-win.c wasm2c/wasm-rt-wasi.c  ${LIBC_MAIN_SRC_OUT_C})
+  target_include_directories(wasm-rt-impl PRIVATE ${CMAKE_SOURCE_DIR}/wasm2c)
+  target_compile_options(wasm-rt-impl PRIVATE "-Wno-unused-value")
   install(TARGETS wasm-rt-impl DESTINATION ${CMAKE_INSTALL_LIBDIR})
   install(FILES wasm2c/wasm-rt.h wasm2c/wasm-rt-impl.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 endif ()
