@@ -29,7 +29,7 @@ const char SECTION_NAME(declarations)[] =
 "       ? ((t)table.data[x].func)(__VA_ARGS__)           \\\n"
 "       : TRAP(CALL_INDIRECT))\n"
 "\n"
-"#if defined(WASM_GUARDPAGE_MODEL)\n"
+"#if WASM_USING_GUARD_PAGES == 1\n"
 "#define MEMCHECK(mem, a, t)\n"
 "#else\n"
 "#define MEMCHECK(mem, a, t)  \\\n"
