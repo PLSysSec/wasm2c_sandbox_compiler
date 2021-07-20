@@ -245,6 +245,15 @@ extern void wasm_rt_cleanup_wasi(wasm_sandbox_wasi_data*);
 // Helper function that host can use to ensure wasm2c code is loaded correctly when using dynamic libraries
 extern void wasm2c_ensure_linked();
 
+// Runtime functions for shadow memory
+extern void wasm2c_shadow_memory_create(wasm_rt_memory_t* mem);
+extern void wasm2c_shadow_memory_destroy(wasm_rt_memory_t* mem);
+extern void wasm2c_shadow_memory_check_load(wasm_rt_memory_t* mem, uint32_t ptr, uint32_t ptr_size);
+extern void wasm2c_shadow_memory_check_store(wasm_rt_memory_t* mem, uint32_t ptr, uint32_t ptr_size);
+extern void wasm2c_shadow_memory_check_global_reserve(wasm_rt_memory_t* mem, uint32_t ptr, uint32_t ptr_size);
+extern void wasm2c_shadow_memory_malloc(wasm_rt_memory_t* mem, uint32_t ptr, uint32_t ptr_size);
+extern void wasm2c_shadow_memory_free(wasm_rt_memory_t* mem, uint32_t ptr);
+
 #ifdef __cplusplus
 }
 #endif

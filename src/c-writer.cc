@@ -817,6 +817,19 @@ void CWriter::WriteSandboxStruct() {
 
   WriteGlobals();
 
+  {
+    Dedent(2);
+    Write("#if defined(WASM_CHECK_SHADOW_MEMORY)", Newline());
+    Indent(2);
+    {
+      WriteMemory("w2c_shadow_memory");
+      Write(Newline());
+    }
+    Dedent(2);
+    Write("#endif", Newline());
+    Indent(2);
+  }
+
   Dedent(2);
   Write("} wasm2c_sandbox_t;", Newline(), Newline());
 }
@@ -992,20 +1005,37 @@ void CWriter::WriteGlobals() {
 }
 
 void CWriter::WriteGlobalInitializers() {
-  Index global_index = 0;
-
   Write(Newline(), "static void init_globals(wasm2c_sandbox_t* const sbx) ", OpenBrace());
 
-  for (const Global* global : module_->globals) {
-    bool is_import = global_index < module_->num_global_imports;
-    if (!is_import) {
-      assert(!global->init_expr.empty());
-      Write("sbx->", GlobalName(global->name), " = ");
-      WriteInitExpr(global->init_expr);
-      Write(";", Newline());
+  {
+    Index global_index = 0;
+
+    for (const Global* global : module_->globals) {
+      bool is_import = global_index < module_->num_global_imports;
+      if (!is_import) {
+        assert(!global->init_expr.empty());
+        Write("sbx->", GlobalName(global->name), " = ");
+        WriteInitExpr(global->init_expr);
+        Write(";", Newline());
+      }
+      ++global_index;
     }
-    ++global_index;
   }
+
+  {
+    Index global_index = 0;
+
+    for (const Global* global : module_->globals) {
+      bool is_import = global_index < module_->num_global_imports;
+      if (!is_import) {
+        std::string global_name_expr = "sbx->" + GetGlobalName(global->name);
+        Write("WASM_SHADOW_MEMORY_CHECK_GLOBAL_RESERVE(&(sbx->w2c_shadow_memory), ", global_name_expr,  ", sizeof(", global_name_expr, "));", Newline());
+      }
+
+      ++global_index;
+    }
+  }
+
   Write(CloseBrace(), Newline());
 }
 
@@ -1085,17 +1115,18 @@ void CWriter::WriteDataInitializers() {
 
   Write(Newline(), "static void init_memory(wasm2c_sandbox_t* const sbx) ", OpenBrace());
   if (memory && module_->num_memory_imports == 0) {
-    uint32_t max =
-        memory->page_limits.has_max ? memory->page_limits.max : 65536;
-      Write("wasm_rt_allocate_memory(&(sbx->", ExternalRef(memory->name), "), ",
-            memory->page_limits.initial, ", ", max, ");", Newline());
+    uint32_t max = memory->page_limits.has_max ? memory->page_limits.max : 65536;
+    Write("wasm_rt_allocate_memory(&(sbx->", ExternalRef(memory->name), "), ",
+      memory->page_limits.initial, ", ", max, ");", Newline());
+
+    Write("WASM_SHADOW_MEMORY_CREATE(&(sbx->w2c_shadow_memory));", Newline());
   }
   data_segment_index = 0;
   for (const DataSegment* data_segment : module_->data_segments) {
     Write("LOAD_DATA(sbx->", ExternalRef(memory->name), ", ");
     WriteInitExpr(data_segment->offset);
     Write(", data_segment_data_", data_segment_index, ", ",
-          data_segment->data.size(), ");", Newline());
+      data_segment->data.size(), ", &(sbx->w2c_shadow_memory));", Newline());
     ++data_segment_index;
   }
 
@@ -1104,6 +1135,7 @@ void CWriter::WriteDataInitializers() {
 
   Write(Newline(), "static void cleanup_memory(wasm2c_sandbox_t* const sbx) ", OpenBrace());
   Write("wasm_rt_deallocate_memory(&(sbx->", ExternalRef(memory->name), "));", Newline());
+  Write("WASM_SHADOW_MEMORY_DESTROY(&(sbx->w2c_shadow_memory));", Newline());
   Write(CloseBrace(), Newline());
 }
 
@@ -1285,8 +1317,16 @@ void CWriter::Write(const Func& func) {
   local_sym_map_.clear();
   stack_var_sym_map_.clear();
 
-  Write(GetFuncStaticOrExport(GetGlobalName(func.name)), ResultType(func.decl.sig.result_types), " ",
-        GlobalName(func.name), "(");
+  std::string func_name_suffix;
+  auto out_func_name = GetGlobalName(func.name);
+
+  if (out_func_name == "w2c_dlmalloc" || out_func_name == "w2c_dlfree")
+  {
+    func_name_suffix = "_wrapped";
+  }
+
+  Write(GetFuncStaticOrExport(out_func_name), ResultType(func.decl.sig.result_types), " ",
+        out_func_name + func_name_suffix, "(");
   WriteParamsAndLocals();
   Write("FUNC_PROLOGUE;", Newline());
 
@@ -1316,6 +1356,25 @@ void CWriter::Write(const Func& func) {
   stream_->WriteData(buf->data.data(), buf->data.size());
 
   Write(CloseBrace());
+
+  if (out_func_name == "w2c_dlmalloc") {
+    Write(Newline(), Newline());
+    Write(GetFuncStaticOrExport(out_func_name), "u32 w2c_dlmalloc(wasm2c_sandbox_t* const sbx, u32 ptr_size) ", OpenBrace());
+    Write("FUNC_PROLOGUE;", Newline());
+    Write("u32 ret = w2c_dlmalloc(sbx, ptr_size);", Newline());
+    Write("WASM_SHADOW_MEMORY_MALLOC(&(sbx->w2c_shadow_memory), ret, ptr_size);", Newline());
+    Write("FUNC_EPILOGUE;", Newline());
+    Write("return ret;", Newline());
+    Write(CloseBrace());
+  } else if (out_func_name == "w2c_dlfree") {
+    Write(Newline(), Newline());
+    Write(GetFuncStaticOrExport(out_func_name), "void w2c_dlfree(wasm2c_sandbox_t* const sbx, u32 ptr) ", OpenBrace());
+    Write("FUNC_PROLOGUE;", Newline());
+    Write("WASM_SHADOW_MEMORY_FREE(&(sbx->w2c_shadow_memory), ptr);", Newline());
+    Write("w2c_dlfree(sbx, ptr);", Newline());
+    Write("FUNC_EPILOGUE;", Newline());
+    Write(CloseBrace());
+  }
 
   func_stream_.Clear();
   func_ = nullptr;
@@ -2096,7 +2155,7 @@ void CWriter::Write(const LoadExpr& expr) {
   Memory* memory = module_->memories[0];
 
   Type result_type = expr.opcode.GetResultType();
-  Write(StackVar(0, result_type), " = ", func, "(&(sbx->", ExternalRef(memory->name),
+  Write(StackVar(0, result_type), " = ", func, "(WASM_SHADOW_MEMORY_REF, &(sbx->", ExternalRef(memory->name),
         "), (u64)(", StackVar(0), ")");
   if (expr.offset != 0)
     Write(" + ", expr.offset, "u");
@@ -2125,7 +2184,7 @@ void CWriter::Write(const StoreExpr& expr) {
   assert(module_->memories.size() == 1);
   Memory* memory = module_->memories[0];
 
-  Write(func, "(&(sbx->", ExternalRef(memory->name), "), (u64)(", StackVar(1), ")");
+  Write(func, "(WASM_SHADOW_MEMORY_REF, &(sbx->", ExternalRef(memory->name), "), (u64)(", StackVar(1), ")");
   if (expr.offset != 0)
     Write(" + ", expr.offset);
   Write(", ", StackVar(0), ");", Newline());
