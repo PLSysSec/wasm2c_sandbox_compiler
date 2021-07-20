@@ -1361,7 +1361,7 @@ void CWriter::Write(const Func& func) {
     Write(Newline(), Newline());
     Write(GetFuncStaticOrExport(out_func_name), "u32 w2c_dlmalloc(wasm2c_sandbox_t* const sbx, u32 ptr_size) ", OpenBrace());
     Write("FUNC_PROLOGUE;", Newline());
-    Write("u32 ret = w2c_dlmalloc(sbx, ptr_size);", Newline());
+    Write("u32 ret = w2c_dlmalloc_wrapped(sbx, ptr_size);", Newline());
     Write("WASM_SHADOW_MEMORY_MALLOC(&(sbx->w2c_shadow_memory), ret, ptr_size);", Newline());
     Write("FUNC_EPILOGUE;", Newline());
     Write("return ret;", Newline());
@@ -1371,7 +1371,7 @@ void CWriter::Write(const Func& func) {
     Write(GetFuncStaticOrExport(out_func_name), "void w2c_dlfree(wasm2c_sandbox_t* const sbx, u32 ptr) ", OpenBrace());
     Write("FUNC_PROLOGUE;", Newline());
     Write("WASM_SHADOW_MEMORY_FREE(&(sbx->w2c_shadow_memory), ptr);", Newline());
-    Write("w2c_dlfree(sbx, ptr);", Newline());
+    Write("w2c_dlfree_wrapped(sbx, ptr);", Newline());
     Write("FUNC_EPILOGUE;", Newline());
     Write(CloseBrace());
   }
