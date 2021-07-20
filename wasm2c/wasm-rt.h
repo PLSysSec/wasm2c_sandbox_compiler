@@ -253,6 +253,7 @@ extern void wasm2c_shadow_memory_check_store(wasm_rt_memory_t* mem, const char* 
 extern void wasm2c_shadow_memory_check_global_reserve(wasm_rt_memory_t* mem, uint32_t ptr, uint32_t ptr_size);
 extern void wasm2c_shadow_memory_malloc(wasm_rt_memory_t* mem, uint32_t ptr, uint32_t ptr_size);
 extern void wasm2c_shadow_memory_free(wasm_rt_memory_t* mem, uint32_t ptr);
+extern void wasm2c_shadow_memory_print_allocations(wasm_rt_memory_t* mem);
 
 #ifdef __cplusplus
 }

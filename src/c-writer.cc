@@ -1028,8 +1028,12 @@ void CWriter::WriteGlobalInitializers() {
     for (const Global* global : module_->globals) {
       bool is_import = global_index < module_->num_global_imports;
       if (!is_import) {
-        std::string global_name_expr = "sbx->" + GetGlobalName(global->name);
+        std::string global_name = GetGlobalName(global->name);
+        std::string global_name_expr = "sbx->" + global_name;
         Write("WASM_SHADOW_MEMORY_CHECK_GLOBAL_RESERVE(&(sbx->w2c_shadow_memory), ", global_name_expr,  ", sizeof(", global_name_expr, "));", Newline());
+        if (global_name == "w2c___heap_base") {
+          Write("WASM_SHADOW_MEMORY_CHECK_GLOBAL_RESERVE(&(sbx->w2c_shadow_memory), 0, ", global_name_expr, ");", Newline());
+        }
       }
 
       ++global_index;
