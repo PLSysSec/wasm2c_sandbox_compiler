@@ -2155,8 +2155,10 @@ void CWriter::Write(const LoadExpr& expr) {
   Memory* memory = module_->memories[0];
 
   Type result_type = expr.opcode.GetResultType();
-  Write(StackVar(0, result_type), " = ", func, "(WASM_SHADOW_MEMORY_REF, &(sbx->", ExternalRef(memory->name),
-        "), (u64)(", StackVar(0), ")");
+  Write(StackVar(0, result_type), " = ", func, "(WASM_SHADOW_MEMORY_REF, ",
+    "\"", GetGlobalName(func_->name), "\", ",
+    "&(sbx->", ExternalRef(memory->name),
+    "), (u64)(", StackVar(0), ")");
   if (expr.offset != 0)
     Write(" + ", expr.offset, "u");
   Write(");", Newline());
@@ -2184,7 +2186,10 @@ void CWriter::Write(const StoreExpr& expr) {
   assert(module_->memories.size() == 1);
   Memory* memory = module_->memories[0];
 
-  Write(func, "(WASM_SHADOW_MEMORY_REF, &(sbx->", ExternalRef(memory->name), "), (u64)(", StackVar(1), ")");
+  Write(func, "(WASM_SHADOW_MEMORY_REF, ",
+    "\"", GetGlobalName(func_->name), "\", ",
+    "&(sbx->", ExternalRef(memory->name),
+    "), (u64)(", StackVar(1), ")");
   if (expr.offset != 0)
     Write(" + ", expr.offset);
   Write(", ", StackVar(0), ");", Newline());

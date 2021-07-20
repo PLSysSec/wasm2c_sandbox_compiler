@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <map>
 
 enum class MEMORY_STATE: uint8_t {
@@ -94,7 +95,13 @@ static inline void memory_state_transform_set(wasm_rt_memory_t* mem, uint32_t pt
   }
 }
 
-void wasm2c_shadow_memory_check_load(wasm_rt_memory_t* mem, uint32_t ptr, uint32_t ptr_size) {
+void wasm2c_shadow_memory_check_load(wasm_rt_memory_t* mem, const char* func_name, uint32_t ptr, uint32_t ptr_size) {
+  if (strcmp(func_name, "w2c_dlmalloc") == 0 ||
+    strcmp(func_name, "w2c_free") == 0
+  ) {
+    // these functions actually look at uninit memory
+    return;
+  }
 #ifdef WASM_CHECK_SHADOW_MEMORY_UNINIT_READ
   memory_state_check(mem, ptr, ptr_size, MEMORY_STATE::INITIALIZED);
 #else
@@ -102,7 +109,14 @@ void wasm2c_shadow_memory_check_load(wasm_rt_memory_t* mem, uint32_t ptr, uint32
 #endif
 }
 
-void wasm2c_shadow_memory_check_store(wasm_rt_memory_t* mem, uint32_t ptr, uint32_t ptr_size) {
+void wasm2c_shadow_memory_check_store(wasm_rt_memory_t* mem, const char* func_name, uint32_t ptr, uint32_t ptr_size) {
+  if (strcmp(func_name, "w2c_dlmalloc") == 0 ||
+    strcmp(func_name, "w2c_free") == 0
+  ) {
+    // these functions actually look at uninit memory
+    return;
+  }
+
   memory_state_transform(mem, ptr, ptr_size, MEMORY_STATE::ALLOCED, MEMORY_STATE::INITIALIZED);
   memory_state_check(mem, ptr, ptr_size, MEMORY_STATE::INITIALIZED);
 }
