@@ -20,7 +20,8 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <setjmp.h>
-#include <veriwasi.h>
+#include </usr/local/home/evan/prusti_test/verified-wrappers/bindings/veriwasi.h>
+//#include <../../../../../veriwasi.h>
 
 
 #if defined(_WIN32)
