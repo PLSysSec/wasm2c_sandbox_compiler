@@ -483,6 +483,8 @@ endif()
     LIBS ${LDL_LIB} 
     INSTALL
   )
+  target_include_directories(wasm2c-runner PUBLIC ${CMAKE_SOURCE_DIR}/../../../../bindings)
+
 
   # wasm-opcodecnt
   wabt_executable(
