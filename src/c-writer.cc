@@ -1314,7 +1314,7 @@ void CWriter::WriteInit() {
   Write("init_globals(sbx);", Newline());
   Write("init_table(sbx);", Newline());
   
-  Write("sbx->wasi_data = wasm_rt_init_wasi(sbx->", GetMainMemoryName(), ");", Newline());
+  Write("sbx->wasi_data = wasm_rt_init_wasi(&(sbx->", GetMainMemoryName(), "));", Newline());
   for (Var* var : module_->starts) {
     Write(ExternalRef(module_->GetFunc(*var)->name), "();", Newline());
   }
