@@ -223,6 +223,7 @@ class CWriter {
   void WriteFuncDeclaration(const FuncDeclaration&, const std::string&, bool add_storage_class);
   void WriteImportFuncDeclaration(const FuncDeclaration&, const std::string&);
   std::string GetMainMemoryName();
+  size_t GetMainMemorySize();
   void WriteGlobalInitializers();
   void WriteGlobals();
   void WriteGlobalsExport();
@@ -1313,7 +1314,7 @@ void CWriter::WriteInit() {
   Write("init_globals(sbx);", Newline());
   Write("init_table(sbx);", Newline());
   
-  Write("sbx->wasi_data = wasm_rt_init_wasi(&(sbx->", ExternalRef(memory->name), ",", ExternalRef(memory->size) ");", Newline());
+  Write("sbx->wasi_data = wasm_rt_init_wasi(&(sbx->", GetMainMemoryName(), "));", Newline());
   for (Var* var : module_->starts) {
     Write(ExternalRef(module_->GetFunc(*var)->name), "();", Newline());
   }

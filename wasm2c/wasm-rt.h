@@ -260,7 +260,7 @@ extern void wasm_rt_expand_table(wasm_rt_table_t*);
 extern void wasm_rt_sys_init();
 
 // Initialize wasi for the given sandbox. Called prior to sandbox execution.
-extern struct VmCtx* wasm_rt_init_wasi(uint8_t* mem, size_t memsize);
+extern struct VmCtx* wasm_rt_init_wasi(wasm_rt_memory_t* mem);
 
 extern void wasm_rt_cleanup_wasi(VmCtx*);
 

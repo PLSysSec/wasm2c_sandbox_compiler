@@ -352,8 +352,9 @@ set(WABT_LIBRARY_SRC
 add_library(wabt STATIC ${WABT_LIBRARY_SRC})
 
 add_library(wasm-rt-impl STATIC SHARED wasm2c/wasm-rt-impl.c wasm2c/wasm-rt-os-unix.c wasm2c/wasm-rt-os-win.c wasm2c/wasm-rt-wasi.c)
+target_include_directories(wasm-rt-impl PUBLIC ${CMAKE_SOURCE_DIR}/../../../../bindings)
 install(TARGETS wasm-rt-impl DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(FILES wasm2c/wasm-rt.h wasm2c/wasm-rt-impl.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES wasm2c/wasm-rt.h wasm2c/wasm-rt-impl.h ${CMAKE_SOURCE_DIR}/../../../../bindings/veriwasi.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 if (BUILD_FUZZ_TOOLS)
   set(FUZZ_FLAGS "-fsanitize=fuzzer,address")
@@ -479,7 +480,7 @@ endif()
   wabt_executable(
     NAME wasm2c-runner
     SOURCES wasm2c/wasm-rt-runner.c
-    LIBS ${LDL_LIB}
+    LIBS ${LDL_LIB} 
     INSTALL
   )
 

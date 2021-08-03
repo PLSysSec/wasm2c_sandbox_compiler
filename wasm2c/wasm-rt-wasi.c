@@ -785,8 +785,8 @@ void wasm_rt_sys_init() {
   os_init();
 }
 
-VmCtx* wasm_rt_init_wasi(uint8_t* mem,   size_t memsize) {
-  return veriwasi_init(mem, memsize);
+VmCtx* wasm_rt_init_wasi(wasm_rt_memory_t* mem) {
+  return veriwasi_init(mem->data, mem->size);
   // init_fds(wasi_data);
   // os_clock_init(&(wasi_data->clock_data));
   // // Remove unused function warnings
