@@ -20,6 +20,8 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <setjmp.h>
+#include <veriwasi.h>
+
 
 #if defined(_WIN32)
   #define WASM2C_FUNC_EXPORT __declspec(dllexport)
@@ -138,6 +140,7 @@ typedef struct wasm_func_type_t {
 
 #define WASM2C_WASI_MAX_SETJMP_STACK 32
 #define WASM2C_WASI_MAX_FDS 32
+/*
 typedef struct wasm_sandbox_wasi_data {
   wasm_rt_memory_t* heap_memory;
 
@@ -155,6 +158,7 @@ typedef struct wasm_sandbox_wasi_data {
   void* clock_data;
 
 } wasm_sandbox_wasi_data;
+*/
 
 typedef void (*wasm_rt_sys_init_t)(void);
 typedef void* (*create_wasm2c_sandbox_t)(void);
@@ -256,9 +260,9 @@ extern void wasm_rt_expand_table(wasm_rt_table_t*);
 extern void wasm_rt_sys_init();
 
 // Initialize wasi for the given sandbox. Called prior to sandbox execution.
-extern void wasm_rt_init_wasi(wasm_sandbox_wasi_data*);
+extern VmCtx* wasm_rt_init_wasi(uint8_t* mem, size_t memsize);
 
-extern void wasm_rt_cleanup_wasi(wasm_sandbox_wasi_data*);
+extern void wasm_rt_cleanup_wasi(VmCtx*);
 
 // Helper function that host can use to ensure wasm2c code is loaded correctly when using dynamic libraries
 extern void wasm2c_ensure_linked();
