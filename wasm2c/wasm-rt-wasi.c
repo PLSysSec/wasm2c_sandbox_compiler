@@ -156,9 +156,9 @@ static void abort_with_message(const char* message) {
 /////////////////////////////////////////// Emscripten runtime ///////////////////////////////////////////////
 
 // Setjmp/longjmp are not currently supported safely. So lonjmp with abort, setjmp can be a noop.
-void Z_envZ_emscripten_longjmpZ_vii(wasm_sandbox_wasi_data* wasi_data, u32 buf, u32 value) {
-  abort_with_message("longjmp not supported");
-}
+//void Z_envZ_emscripten_longjmpZ_vii(wasm_sandbox_wasi_data* wasi_data, u32 buf, u32 value) {
+//  abort_with_message("longjmp not supported");
+//}
 
 
 // STUB_IMPORT_IMPL(u32,  Z_envZ_emscripten_setjmpZ_ii, (wasm_sandbox_wasi_data* wasi_data, u32 buf), 0);
