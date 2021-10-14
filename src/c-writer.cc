@@ -818,7 +818,7 @@ void CWriter::WriteSandboxStruct() {
 
 void CWriter::WriteFuncTypes() {
   Write(Newline());
-  Write("static void init_func_types(wasm2c_sandbox_t* const sbx) ", OpenBrace());
+  Write("static void init_func_types(struct wasm2c_sandbox_t* const sbx) ", OpenBrace());
   Index func_type_index = 0;
   for (TypeEntry* type : module_->types) {
     FuncType* func_type = cast<FuncType>(type);
@@ -855,7 +855,7 @@ void CWriter::WriteFuncTypes() {
   }
   Write(CloseBrace(), Newline());
 
-  Write("static void cleanup_func_types(wasm2c_sandbox_t* const sbx) ", OpenBrace());
+  Write("static void cleanup_func_types(struct wasm2c_sandbox_t* const sbx) ", OpenBrace());
   {
     Write("wasm_rt_cleanup_func_types(&sbx->func_type_structs, &sbx->func_type_count);", Newline());
   }
@@ -976,7 +976,7 @@ void CWriter::WriteFuncDeclaration(const FuncDeclaration& decl,
   if (add_storage_class) {
     Write(GetFuncStaticOrExport(name));
   }
-  Write(ResultType(decl.sig.result_types), " ", name, "(wasm2c_sandbox_t* const");
+  Write(ResultType(decl.sig.result_types), " ", name, "(struct wasm2c_sandbox_t* const");
   for (Index i = 0; i < decl.GetNumParams(); ++i) {
     Write(", ", decl.GetParamType(i));
   }
@@ -992,7 +992,7 @@ void CWriter::WriteEntryFunc(const FuncDeclaration& decl,
   if (add_storage_class) {
     Write(GetFuncStaticOrExport(name));
   }
-  Write(ResultType(decl.sig.result_types), " w2centry_", name, "(wasm2c_sandbox_t* const sbx");
+  Write(ResultType(decl.sig.result_types), " w2centry_", name, "(struct wasm2c_sandbox_t* const sbx");
   for (Index i = 0; i < decl.GetNumParams(); ++i) {
     Write(", ", decl.GetParamType(i), " p", std::to_string(i));
   }
@@ -1067,7 +1067,7 @@ std::string CWriter::GetMainMemoryName() {
 
 void CWriter::WriteGlobalInitializers() {
 
-  Write(Newline(), "static void init_globals(wasm2c_sandbox_t* const sbx) ", OpenBrace());
+  Write(Newline(), "static void init_globals(struct wasm2c_sandbox_t* const sbx) ", OpenBrace());
 
   {
     Index global_index = 0;
@@ -1216,7 +1216,7 @@ void CWriter::WriteDataInitializers() {
     memory = module_->memories[0];
   }
 
-  Write(Newline(), "static void init_memory(wasm2c_sandbox_t* const sbx) ", OpenBrace());
+  Write(Newline(), "static void init_memory(struct wasm2c_sandbox_t* const sbx) ", OpenBrace());
   if (memory && module_->num_memory_imports == 0) {
     uint32_t max =
         memory->page_limits.has_max ? memory->page_limits.max : 65536;
@@ -1235,7 +1235,7 @@ void CWriter::WriteDataInitializers() {
   Write("sbx->wasi_data.heap_memory = &(sbx->", ExternalRef(memory->name), ");", Newline());
   Write(CloseBrace(), Newline());
 
-  Write(Newline(), "static void cleanup_memory(wasm2c_sandbox_t* const sbx) ", OpenBrace());
+  Write(Newline(), "static void cleanup_memory(struct wasm2c_sandbox_t* const sbx) ", OpenBrace());
   Write("wasm_rt_deallocate_memory(&(sbx->", ExternalRef(memory->name), "));", Newline());
   Write(CloseBrace(), Newline());
 }
@@ -1243,7 +1243,7 @@ void CWriter::WriteDataInitializers() {
 void CWriter::WriteElemInitializers() {
   const Table* table = module_->tables.empty() ? nullptr : module_->tables[0];
 
-  Write(Newline(), "static void init_table(wasm2c_sandbox_t* const sbx) ", OpenBrace());
+  Write(Newline(), "static void init_table(struct wasm2c_sandbox_t* const sbx) ", OpenBrace());
   Write("uint32_t offset = 0;", Newline());
   if (table && module_->num_table_imports == 0) {
     uint32_t max =
@@ -1279,7 +1279,7 @@ void CWriter::WriteElemInitializers() {
   Write("sbx->", ExternalRef(table->name), "_current_index = offset + ", std::to_string(first_unused_elem), ";", Newline());
   Write(CloseBrace(), Newline());
 
-  Write(Newline(), "static void cleanup_table(wasm2c_sandbox_t* const sbx) ", OpenBrace());
+  Write(Newline(), "static void cleanup_table(struct wasm2c_sandbox_t* const sbx) ", OpenBrace());
   if (table && module_->num_table_imports == 0) {
     Write("wasm_rt_deallocate_table(&(sbx->", ExternalRef(table->name), "));", Newline());
   }
@@ -1288,7 +1288,7 @@ void CWriter::WriteElemInitializers() {
 
 void CWriter::WriteExportLookup() {
   Write(Newline(), "static void* lookup_wasm2c_nonfunc_export(void* sbx_ptr, const char* name) ", OpenBrace());
-  Write("wasm2c_sandbox_t* const sbx = (wasm2c_sandbox_t* const) sbx_ptr;", Newline());
+  Write("wasm2c_sandbox_t* const sbx = (struct wasm2c_sandbox_t* const) sbx_ptr;", Newline());
 
   WriteMemoriesExport();
   WriteTablesExport();
@@ -1300,7 +1300,7 @@ void CWriter::WriteExportLookup() {
 
 void CWriter::WriteFuncIndexLookup() {
   Write(Newline(), "static u32 lookup_wasm2c_func_index(void* sbx_ptr, u32 param_count, u32 result_count, wasm_rt_type_t* types) ", OpenBrace());
-  Write("wasm2c_sandbox_t* const sbx = (wasm2c_sandbox_t* const) sbx_ptr;", Newline());
+  Write("wasm2c_sandbox_t* const sbx = (struct wasm2c_sandbox_t* const) sbx_ptr;", Newline());
   Write("return wasm_rt_register_func_type(&sbx->func_type_structs, &sbx->func_type_count, param_count, result_count, types);", Newline());
   Write(CloseBrace(), Newline());
 }
@@ -1310,7 +1310,7 @@ void CWriter::WriteCallbackAddRemove() {
 
   Write(Newline(), "static u32 add_wasm2c_callback(void* sbx_ptr, u32 func_type_idx, void* func_ptr, wasm_rt_elem_target_class_t func_class) ", OpenBrace());
   {
-    Write("wasm2c_sandbox_t* const sbx = (wasm2c_sandbox_t* const) sbx_ptr;", Newline());
+    Write("wasm2c_sandbox_t* const sbx = (struct wasm2c_sandbox_t* const) sbx_ptr;", Newline());
 
     if (table->elem_limits.max == 0) {
       Writef("for (u32 i = 1; i != 0; i++) ");
@@ -1343,7 +1343,7 @@ void CWriter::WriteCallbackAddRemove() {
 
   Write(Newline(), "static void remove_wasm2c_callback(void* sbx_ptr, u32 callback_idx) ", OpenBrace());
   {
-    Write("wasm2c_sandbox_t* const sbx = (wasm2c_sandbox_t* const) sbx_ptr;", Newline());
+    Write("wasm2c_sandbox_t* const sbx = (struct wasm2c_sandbox_t* const) sbx_ptr;", Newline());
     Write("sbx->", ExternalRef(table->name), ".data[callback_idx].func = 0;", Newline());
   }
   Write(CloseBrace(), Newline());
@@ -1351,7 +1351,7 @@ void CWriter::WriteCallbackAddRemove() {
 
 void CWriter::WriteInit() {
   Write(Newline(), "static void* create_wasm2c_sandbox(void) ", OpenBrace());
-  Write("wasm2c_sandbox_t* const sbx = (wasm2c_sandbox_t* const) calloc(sizeof(wasm2c_sandbox_t), 1);", Newline());
+  Write("wasm2c_sandbox_t* const sbx = (struct wasm2c_sandbox_t* const) calloc(sizeof(wasm2c_sandbox_t), 1);", Newline());
   Write("init_memory(sbx);", Newline());
   Write("init_func_types(sbx);", Newline());
   Write("init_globals(sbx);", Newline());
@@ -1364,7 +1364,7 @@ void CWriter::WriteInit() {
   Write(CloseBrace(), Newline(), Newline());
 
   Write("static void destroy_wasm2c_sandbox(void* aSbx) ", OpenBrace());
-  Write("wasm2c_sandbox_t* const sbx = (wasm2c_sandbox_t* const) aSbx;", Newline());
+  Write("wasm2c_sandbox_t* const sbx = (struct wasm2c_sandbox_t* const) aSbx;", Newline());
   Write("cleanup_memory(sbx);", Newline());
   Write("cleanup_func_types(sbx);", Newline());
   Write("cleanup_table(sbx);", Newline());
@@ -1447,14 +1447,14 @@ void CWriter::Write(const Func& func) {
   std::string memory_name = GetMainMemoryName();
   if (out_func_name == "w2c_dlmalloc") {
     Write(Newline(), Newline());
-    Write(GetFuncStaticOrExport(out_func_name), "u32 w2c_dlmalloc(wasm2c_sandbox_t* const sbx, u32 ptr_size) ", OpenBrace());
+    Write(GetFuncStaticOrExport(out_func_name), "u32 w2c_dlmalloc(struct wasm2c_sandbox_t* const sbx, u32 ptr_size) ", OpenBrace());
     Write("u32 ret = w2c_dlmalloc_wrapped(sbx, ptr_size);", Newline());
     Write("WASM2C_SHADOW_MEMORY_DLMALLOC(&(sbx->", memory_name, "), ret, ptr_size);", Newline());
     Write("return ret;", Newline());
     Write(CloseBrace());
   } else if (out_func_name == "w2c_dlfree") {
     Write(Newline(), Newline());
-    Write(GetFuncStaticOrExport(out_func_name), "void w2c_dlfree(wasm2c_sandbox_t* const sbx, u32 ptr) ", OpenBrace());
+    Write(GetFuncStaticOrExport(out_func_name), "void w2c_dlfree(struct wasm2c_sandbox_t* const sbx, u32 ptr) ", OpenBrace());
     Write("WASM2C_SHADOW_MEMORY_DLFREE(&(sbx->", memory_name, "), ptr);", Newline());
     Write("w2c_dlfree_wrapped(sbx, ptr);", Newline());
     Write(CloseBrace());
@@ -2468,6 +2468,8 @@ void CWriter::WriteCHeader() {
   Write("#define WASM_CURR_MODULE_PREFIX ", options_.mod_name, Newline());
   Write(s_header_top);
   WriteImports();
+  Write("struct wasm2c_sandbox_t;", Newline());
+  WriteFuncDeclarations();
   Write(s_header_bottom, Newline());
   Write("#endif  /* ", guard, " */", Newline());
 }
