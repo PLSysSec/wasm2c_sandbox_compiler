@@ -217,8 +217,9 @@ class CWriter {
   void WriteSandboxStruct();
   void WriteFuncTypes();
   void WriteImports();
+  bool IsFuncStatic(std::string name);
   std::string GetFuncStaticOrExport(std::string);
-  void WriteFuncDeclarations();
+  void WriteFuncDeclarations(bool for_header);
   void WriteFuncDeclaration(const FuncDeclaration&, const std::string&, bool add_storage_class);
   void WriteEntryFuncs();
   void WriteEntryFunc(const FuncDeclaration&, const std::string&, bool add_storage_class);
@@ -918,7 +919,7 @@ void CWriter::WriteImports() {
   }
 }
 
-void CWriter::WriteFuncDeclarations() {
+void CWriter::WriteFuncDeclarations(bool for_header) {
   if (module_->funcs.size() == module_->num_func_imports)
     return;
 
@@ -926,9 +927,16 @@ void CWriter::WriteFuncDeclarations() {
 
   Index func_index = 0;
   for (const Func* func : module_->funcs) {
+    std::string global_func_name;
+    if (for_header) {
+      global_func_name = DefineGlobalScopeName(func->name);
+    } else {
+      global_func_name = GetGlobalName(func->name);
+    }
     bool is_import = func_index < module_->num_func_imports;
-    if (!is_import) {
-      WriteFuncDeclaration(func->decl, DefineGlobalScopeName(func->name), true /* add_storage_class */);
+    bool static_exclude = for_header && IsFuncStatic(global_func_name);
+    if (!is_import && !static_exclude) {
+      WriteFuncDeclaration(func->decl, global_func_name, true /* add_storage_class */);
       Write(";", Newline());
     }
     ++func_index;
@@ -956,14 +964,14 @@ void CWriter::WriteEntryFuncs() {
   Write("#endif", Newline());
 }
 
+
+bool CWriter::IsFuncStatic(std::string name) {
+  // static functions starts with prefix __
+  return name.rfind("w2c___", 0) == 0 || name == "w2c_main";
+}
+
 std::string CWriter::GetFuncStaticOrExport(std::string name) {
-  std::string static_export_string = "";
-  if (name.rfind("w2c___", 0) == 0 || name == "w2c_main") {
-    // s starts with prefix __
-    static_export_string = "static ";
-  } else {
-    static_export_string = "FUNC_EXPORT ";
-  }
+  std::string static_export_string = IsFuncStatic(name)? "static " : "FUNC_EXPORT ";
   return static_export_string;
 }
 
@@ -2469,7 +2477,7 @@ void CWriter::WriteCHeader() {
   Write(s_header_top);
   WriteImports();
   Write("struct wasm2c_sandbox_t;", Newline());
-  WriteFuncDeclarations();
+  WriteFuncDeclarations(true /* for_header */);
   Write(s_header_bottom, Newline());
   Write("#endif  /* ", guard, " */", Newline());
 }
@@ -2479,7 +2487,7 @@ void CWriter::WriteCSource() {
   WriteSourceTop();
   WriteSandboxStruct();
   WriteFuncTypes();
-  WriteFuncDeclarations();
+  WriteFuncDeclarations(false /* for_header */);
   WriteEntryFuncs();
   WriteGlobalInitializers();
   WriteFuncs();
