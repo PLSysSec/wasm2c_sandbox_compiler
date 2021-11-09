@@ -70,88 +70,88 @@ typedef signed long ssize_t;
 #include "wasm-rt.h"
 #include "wasm-rt-impl.h"
 
-#if defined(__GNUC__)
-#define UNLIKELY(x) __builtin_expect(!!(x), 0)
-#define LIKELY(x) __builtin_expect(!!(x), 1)
-#else
-#define UNLIKELY(x) (x)
-#define LIKELY(x) (x)
-#endif
+// #if defined(__GNUC__)
+// #define UNLIKELY(x) __builtin_expect(!!(x), 0)
+// #define LIKELY(x) __builtin_expect(!!(x), 1)
+// #else
+// #define UNLIKELY(x) (x)
+// #define LIKELY(x) (x)
+// #endif
 
-#if defined(_WIN32)
-#define POSIX_PREFIX(func) _##func
-#else
-#define POSIX_PREFIX(func) func
-#endif
+// #if defined(_WIN32)
+// #define POSIX_PREFIX(func) _##func
+// #else
+// #define POSIX_PREFIX(func) func
+// #endif
 
-#define TRAP(x) wasm_rt_trap(WASM_RT_TRAP_##x)
+// #define TRAP(x) wasm_rt_trap(WASM_RT_TRAP_##x)
 
-#define MEMACCESS(mem, addr) ((void*)&(mem->data[addr]))
+// #define MEMACCESS(mem, addr) ((void*)&(mem->data[addr]))
 
-#define UNCOND_MEMCHECK_SIZE(mem, a, sz)  \
-  if (UNLIKELY((a) + sz > mem->size)) TRAP(OOB)
+// #define UNCOND_MEMCHECK_SIZE(mem, a, sz)  \
+//   if (UNLIKELY((a) + sz > mem->size)) TRAP(OOB)
 
-#define UNCOND_MEMCHECK(mem, a, t)  UNCOND_MEMCHECK_SIZE(mem, a, sizeof(t))
+// #define UNCOND_MEMCHECK(mem, a, t)  UNCOND_MEMCHECK_SIZE(mem, a, sizeof(t))
 
-#define DEFINE_WASI_LOAD(name, t1, t2, t3)              \
-  static inline t3 name(wasm_rt_memory_t* mem, u64 addr) {   \
-    UNCOND_MEMCHECK(mem, addr, t1);                       \
-    t1 result;                                     \
-    memcpy(&result, MEMACCESS(mem, addr), sizeof(t1)); \
-    return (t3)(t2)result;                         \
-  }
+// #define DEFINE_WASI_LOAD(name, t1, t2, t3)              \
+//   static inline t3 name(wasm_rt_memory_t* mem, u64 addr) {   \
+//     UNCOND_MEMCHECK(mem, addr, t1);                       \
+//     t1 result;                                     \
+//     memcpy(&result, MEMACCESS(mem, addr), sizeof(t1)); \
+//     return (t3)(t2)result;                         \
+//   }
 
-#define DEFINE_WASI_STORE(name, t1, t2)                           \
-  static inline void name(wasm_rt_memory_t* mem, u64 addr, t2 value) { \
-    UNCOND_MEMCHECK(mem, addr, t1);                                 \
-    t1 wrapped = (t1)value;                                  \
-    memcpy(MEMACCESS(mem, addr), &wrapped, sizeof(t1));          \
-  }
+// #define DEFINE_WASI_STORE(name, t1, t2)                           \
+//   static inline void name(wasm_rt_memory_t* mem, u64 addr, t2 value) { \
+//     UNCOND_MEMCHECK(mem, addr, t1);                                 \
+//     t1 wrapped = (t1)value;                                  \
+//     memcpy(MEMACCESS(mem, addr), &wrapped, sizeof(t1));          \
+//   }
 
-DEFINE_WASI_LOAD(wasm_i32_load, u32, u32, u32);
-DEFINE_WASI_LOAD(wasm_i64_load, u64, u64, u64);
-DEFINE_WASI_LOAD(wasm_f32_load, f32, f32, f32);
-DEFINE_WASI_LOAD(wasm_f64_load, f64, f64, f64);
-DEFINE_WASI_LOAD(wasm_i32_load8_s, s8, s32, u32);
-DEFINE_WASI_LOAD(wasm_i64_load8_s, s8, s64, u64);
-DEFINE_WASI_LOAD(wasm_i32_load8_u, u8, u32, u32);
-DEFINE_WASI_LOAD(wasm_i64_load8_u, u8, u64, u64);
-DEFINE_WASI_LOAD(wasm_i32_load16_s, s16, s32, u32);
-DEFINE_WASI_LOAD(wasm_i64_load16_s, s16, s64, u64);
-DEFINE_WASI_LOAD(wasm_i32_load16_u, u16, u32, u32);
-DEFINE_WASI_LOAD(wasm_i64_load16_u, u16, u64, u64);
-DEFINE_WASI_LOAD(wasm_i64_load32_s, s32, s64, u64);
-DEFINE_WASI_LOAD(wasm_i64_load32_u, u32, u64, u64);
-DEFINE_WASI_STORE(wasm_i32_store, u32, u32);
-DEFINE_WASI_STORE(wasm_i64_store, u64, u64);
-DEFINE_WASI_STORE(wasm_f32_store, f32, f32);
-DEFINE_WASI_STORE(wasm_f64_store, f64, f64);
-DEFINE_WASI_STORE(wasm_i32_store8, u8, u32);
-DEFINE_WASI_STORE(wasm_i32_store16, u16, u32);
-DEFINE_WASI_STORE(wasm_i64_store8, u8, u64);
-DEFINE_WASI_STORE(wasm_i64_store16, u16, u64);
-DEFINE_WASI_STORE(wasm_i64_store32, u32, u64);
+// DEFINE_WASI_LOAD(wasm_i32_load, u32, u32, u32);
+// DEFINE_WASI_LOAD(wasm_i64_load, u64, u64, u64);
+// DEFINE_WASI_LOAD(wasm_f32_load, f32, f32, f32);
+// DEFINE_WASI_LOAD(wasm_f64_load, f64, f64, f64);
+// DEFINE_WASI_LOAD(wasm_i32_load8_s, s8, s32, u32);
+// DEFINE_WASI_LOAD(wasm_i64_load8_s, s8, s64, u64);
+// DEFINE_WASI_LOAD(wasm_i32_load8_u, u8, u32, u32);
+// DEFINE_WASI_LOAD(wasm_i64_load8_u, u8, u64, u64);
+// DEFINE_WASI_LOAD(wasm_i32_load16_s, s16, s32, u32);
+// DEFINE_WASI_LOAD(wasm_i64_load16_s, s16, s64, u64);
+// DEFINE_WASI_LOAD(wasm_i32_load16_u, u16, u32, u32);
+// DEFINE_WASI_LOAD(wasm_i64_load16_u, u16, u64, u64);
+// DEFINE_WASI_LOAD(wasm_i64_load32_s, s32, s64, u64);
+// DEFINE_WASI_LOAD(wasm_i64_load32_u, u32, u64, u64);
+// DEFINE_WASI_STORE(wasm_i32_store, u32, u32);
+// DEFINE_WASI_STORE(wasm_i64_store, u64, u64);
+// DEFINE_WASI_STORE(wasm_f32_store, f32, f32);
+// DEFINE_WASI_STORE(wasm_f64_store, f64, f64);
+// DEFINE_WASI_STORE(wasm_i32_store8, u8, u32);
+// DEFINE_WASI_STORE(wasm_i32_store16, u16, u32);
+// DEFINE_WASI_STORE(wasm_i64_store8, u8, u64);
+// DEFINE_WASI_STORE(wasm_i64_store16, u16, u64);
+// DEFINE_WASI_STORE(wasm_i64_store32, u32, u64);
 
 // Imports
 
-#ifdef VERBOSE_LOGGING
-#define VERBOSE_LOG(...) { printf(__VA_ARGS__); }
-#else
-#define VERBOSE_LOG(...)
-#endif
+// #ifdef VERBOSE_LOGGING
+// #define VERBOSE_LOG(...) { printf(__VA_ARGS__); }
+// #else
+// #define VERBOSE_LOG(...)
+// #endif
 
-#define STUB_IMPORT_IMPL(ret, name, params, returncode) \
-ret name params { \
-  VERBOSE_LOG("[stub import: " #name "]\n"); \
-  return returncode; \
-}
+// #define STUB_IMPORT_IMPL(ret, name, params, returncode) \
+// ret name params { \
+//   VERBOSE_LOG("[stub import: " #name "]\n"); \
+//   return returncode; \
+// }
 
-// Generic abort method for a runtime error in the runtime.
+// // Generic abort method for a runtime error in the runtime.
 
-static void abort_with_message(const char* message) {
-  fprintf(stderr, "%s\n", message);
-  TRAP(UNREACHABLE);
-}
+// static void abort_with_message(const char* message) {
+//   fprintf(stderr, "%s\n", message);
+//   TRAP(UNREACHABLE);
+// }
 
 /////////////////////////////////////////// Emscripten runtime ///////////////////////////////////////////////
 
@@ -223,7 +223,7 @@ static void abort_with_message(const char* message) {
 // }
 
 // Syscalls return a negative error code
-#define EM_EACCES -2
+// #define EM_EACCES -2
 
 // static u32 do_stat(VmCtx* wasi_data, int nfd, u32 buf) {
 //   struct stat nbuf;
@@ -275,9 +275,9 @@ static void abort_with_message(const char* message) {
 //   return 0;
 // }
 
-#define WASM_STDIN  0
-#define WASM_STDOUT 1
-#define WASM_STDERR 2
+// #define WASM_STDIN  0
+// #define WASM_STDOUT 1
+// #define WASM_STDERR 2
 
 
 // static void init_fds(wasm_sandbox_wasi_data* wasi_data) {
@@ -486,46 +486,46 @@ static void abort_with_message(const char* message) {
 // errno_t sock_shutdown(void* ctx, fd_t sock, sdflags_t how);
 
 // Bad file descriptor.
-#define WASI_BADF_ERROR 8
-// Invalid argument
-#define WASI_INVAL_ERROR 28
-// Operation not permitted.
-#define WASI_PERM_ERROR 63
-#define WASI_DEFAULT_ERROR WASI_PERM_ERROR
+// #define WASI_BADF_ERROR 8
+// // Invalid argument
+// #define WASI_INVAL_ERROR 28
+// // Operation not permitted.
+// #define WASI_PERM_ERROR 63
+// #define WASI_DEFAULT_ERROR WASI_PERM_ERROR
 
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_adviseZ_iijji, (u32 a, u64 b, u64 c, u32 d), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_allocateZ_iijj, (u32 a, u64 b, u64 c), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_datasyncZ_ii, (u32 a), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_fdstat_getZ_iii, (u32 a, u32 b), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_fdstat_set_flagsZ_iii, (u32 a, u32 b), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_fdstat_set_rightsZ_iijj, (u32 a, u64 b, u64 c), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_filestat_getZ_iii, (u32 a, u32 b), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_filestat_set_sizeZ_iij, (u32 a, u64 b), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_filestat_set_timesZ_iijji, (u32 a, u64 b, u64 c, u32 d), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_preadZ_iiiiji, (u32 a, u32 b, u32 c, u64 d, u32 e), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_prestat_dir_nameZ_iiii, (u32 a, u32 b, u32 c), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_pwriteZ_iiiiji, (u32 a, u32 b, u32 c, u64 d, u32 e), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_readdirZ_iiiiji, (u32 a, u32 b, u32 c, u64 d, u32 e), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_renumberZ_iii, (u32 a, u32 b), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_syncZ_ii, (u32 a), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_tellZ_iii, (u32 a, u32 b), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_create_directoryZ_iiii, (u32 a, u32 b, u32 c), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_filestat_getZ_iiiiii, (u32 a, u32 b, u32 c, u32 d, u32 e), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_filestat_set_timesZ_iiiiijji, (u32 a, u32 b, u32 c, u32 d, u64 e, u64 f, u32 g), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_linkZ_iiiiiiii, (u32 a, u32 b, u32 c, u32 d, u32 e, u32 f, u32 g), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_openZ_iiiiiijjii, (u32 a, u32 b, u32 c, u32 d, u32 e, u64 f, u64 g, u32 h, u32 i), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_readlinkZ_iiiiiii, (u32 a, u32 b, u32 c, u32 d, u32 e, u32 f), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_remove_directoryZ_iiii, (u32 a, u32 b, u32 c), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_renameZ_iiiiiii, (u32 a, u32 b, u32 c, u32 d, u32 e, u32 f), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_symlinkZ_iiiiii, (u32 a, u32 b, u32 c, u32 d, u32 e), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_unlink_fileZ_iiii, (u32 a, u32 b, u32 c), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_poll_oneoffZ_iiiii, (u32 a, u32 b, u32 c, u32 d), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_proc_raiseZ_ii, (u32 a), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_random_getZ_iii, (u32 a, u32 b), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_sched_yieldZ_i, (), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_sock_recvZ_iiiiiii, (u32 a, u32 b, u32 c, u32 d, u32 e, u32 f), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_sock_sendZ_iiiiii, (u32 a, u32 b, u32 c, u32 d, u32 e), WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_sock_shutdownZ_iii, (u32 a, u32 b), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_adviseZ_iijji, (u32 a, u64 b, u64 c, u32 d), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_allocateZ_iijj, (u32 a, u64 b, u64 c), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_datasyncZ_ii, (u32 a), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_fdstat_getZ_iii, (u32 a, u32 b), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_fdstat_set_flagsZ_iii, (u32 a, u32 b), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_fdstat_set_rightsZ_iijj, (u32 a, u64 b, u64 c), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_filestat_getZ_iii, (u32 a, u32 b), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_filestat_set_sizeZ_iij, (u32 a, u64 b), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_filestat_set_timesZ_iijji, (u32 a, u64 b, u64 c, u32 d), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_preadZ_iiiiji, (u32 a, u32 b, u32 c, u64 d, u32 e), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_prestat_dir_nameZ_iiii, (u32 a, u32 b, u32 c), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_pwriteZ_iiiiji, (u32 a, u32 b, u32 c, u64 d, u32 e), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_readdirZ_iiiiji, (u32 a, u32 b, u32 c, u64 d, u32 e), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_renumberZ_iii, (u32 a, u32 b), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_syncZ_ii, (u32 a), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_fd_tellZ_iii, (u32 a, u32 b), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_create_directoryZ_iiii, (u32 a, u32 b, u32 c), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_filestat_getZ_iiiiii, (u32 a, u32 b, u32 c, u32 d, u32 e), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_filestat_set_timesZ_iiiiijji, (u32 a, u32 b, u32 c, u32 d, u64 e, u64 f, u32 g), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_linkZ_iiiiiiii, (u32 a, u32 b, u32 c, u32 d, u32 e, u32 f, u32 g), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_openZ_iiiiiijjii, (u32 a, u32 b, u32 c, u32 d, u32 e, u64 f, u64 g, u32 h, u32 i), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_readlinkZ_iiiiiii, (u32 a, u32 b, u32 c, u32 d, u32 e, u32 f), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_remove_directoryZ_iiii, (u32 a, u32 b, u32 c), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_renameZ_iiiiiii, (u32 a, u32 b, u32 c, u32 d, u32 e, u32 f), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_symlinkZ_iiiiii, (u32 a, u32 b, u32 c, u32 d, u32 e), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_path_unlink_fileZ_iiii, (u32 a, u32 b, u32 c), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_poll_oneoffZ_iiiii, (u32 a, u32 b, u32 c, u32 d), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_proc_raiseZ_ii, (u32 a), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_random_getZ_iii, (u32 a, u32 b), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_sched_yieldZ_i, (), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_sock_recvZ_iiiiiii, (u32 a, u32 b, u32 c, u32 d, u32 e, u32 f), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_sock_sendZ_iiiiii, (u32 a, u32 b, u32 c, u32 d, u32 e), WASI_DEFAULT_ERROR);
+// STUB_IMPORT_IMPL(u32, Z_wasi_snapshot_preview1Z_sock_shutdownZ_iii, (u32 a, u32 b), WASI_DEFAULT_ERROR);
 
 /////////////////////////////////////////////////////////////
 ////////// App environment operations
