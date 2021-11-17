@@ -109,8 +109,8 @@ int main(int argc, char const *argv[])
     /*
      * Create runtime_metadata struct and pass through to create_wasm2c_sandbox func
      * */
-    wasm2c_rt_init_data const * init_data = {NULL, NULL, NULL, NULL}; 
-    void* sandbox = sandbox_info.create_wasm2c_sandbox(init_data);
+    wasm2c_rt_init_data init_data = {NULL, NULL, NULL, NULL}; 
+    void* sandbox = sandbox_info.create_wasm2c_sandbox(&init_data);
     if (!sandbox) {
         printf("Error: Could not create sandbox" LINETERM);
         exit(1);

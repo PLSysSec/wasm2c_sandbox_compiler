@@ -169,7 +169,7 @@ typedef struct wasm2c_rt_init_data {
 } wasm2c_rt_init_data;
 
 typedef void (*wasm_rt_sys_init_t)(void);
-typedef void* (*create_wasm2c_sandbox_t)(void);
+typedef void* (*create_wasm2c_sandbox_t)(wasm2c_rt_init_data*);
 typedef void (*destroy_wasm2c_sandbox_t)(void* sbx_ptr);
 typedef void* (*lookup_wasm2c_nonfunc_export_t)(void* sbx_ptr, const char* name);
 typedef uint32_t (*lookup_wasm2c_func_index_t)(void* sbx_ptr, uint32_t param_count, uint32_t result_count, wasm_rt_type_t* types);
@@ -268,7 +268,7 @@ extern void wasm_rt_expand_table(wasm_rt_table_t*);
 extern void wasm_rt_sys_init();
 
 // Initialize wasi for the given sandbox. Called prior to sandbox execution.
-extern struct VmCtx* wasm_rt_init_wasi(wasm_rt_memory_t* mem);
+extern struct VmCtx* wasm_rt_init_wasi(wasm_rt_memory_t *mem, wasm2c_rt_init_data *init_data);
 
 extern void wasm_rt_cleanup_wasi(VmCtx*);
 
