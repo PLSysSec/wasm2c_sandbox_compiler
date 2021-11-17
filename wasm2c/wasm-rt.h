@@ -161,6 +161,13 @@ typedef struct wasm_sandbox_wasi_data {
 } wasm_sandbox_wasi_data;
 */
 
+typedef struct wasm2c_rt_init_data {
+	char* stats_path;
+	char* args_path;
+	char* env_path;
+	char* home;
+} wasm2c_rt_init_data;
+
 typedef void (*wasm_rt_sys_init_t)(void);
 typedef void* (*create_wasm2c_sandbox_t)(void);
 typedef void (*destroy_wasm2c_sandbox_t)(void* sbx_ptr);

@@ -1296,14 +1296,14 @@ void CWriter::WriteCallbackAddRemove() {
 }
 
 void CWriter::WriteInit() {
-  Write(Newline(), "static void* create_wasm2c_sandbox(void) ", OpenBrace());
+  Write(Newline(), "static void* create_wasm2c_sandbox(wasm2c_rt_init_data const* init_data) ", OpenBrace());
   Write("wasm2c_sandbox_t* const sbx = (wasm2c_sandbox_t* const) calloc(sizeof(wasm2c_sandbox_t), 1);", Newline());
   Write("init_memory(sbx);", Newline());
   Write("init_func_types(sbx);", Newline());
   Write("init_globals(sbx);", Newline());
   Write("init_table(sbx);", Newline());
   
-  Write("sbx->wasi_data = wasm_rt_init_wasi(&(sbx->", GetMainMemoryName(), "));", Newline());
+  Write("sbx->wasi_data = wasm_rt_init_wasi(&(sbx->", GetMainMemoryName(), ", init_data));", Newline());
   for (Var* var : module_->starts) {
     Write(ExternalRef(module_->GetFunc(*var)->name), "();", Newline());
   }
