@@ -162,10 +162,12 @@ typedef struct wasm_sandbox_wasi_data {
 */
 
 typedef struct wasm2c_rt_init_data {
-	char* stats_path;
-	char* args_path;
-	char* env_path;
-	char* home;
+  char* homedir;
+	unsigned char* args;
+	uint32_t argc;
+  unsigned char* env;
+  uint32_t envc;
+  char* log_path;
 } wasm2c_rt_init_data;
 
 typedef void (*wasm_rt_sys_init_t)(void);

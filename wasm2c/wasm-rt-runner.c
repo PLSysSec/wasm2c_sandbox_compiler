@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <getopt.h>
 
 #include "wasm-rt.h"
 
@@ -54,6 +56,26 @@ void* open_lib(char const * wasm2c_module_path) {
     return library;
 }
 
+
+int count_words(const char sentence[ ])
+{
+    int counted = 0; // result
+
+    // state:
+    const char* it = sentence;
+    int inword = 0;
+
+    do switch(*it) {
+        case '\0': 
+        case ' ': 
+            if (inword) { inword = 0; counted++; }
+            break;
+        default: inword = 1;
+    } while(*it++);
+
+    return counted;
+}
+
 void close_lib(void* library)
 {
     #if defined(_WIN32)
@@ -97,9 +119,9 @@ int main(int argc, char const *argv[])
     char const * wasm2c_module_path = argv[1];
     char const * wasm_module_name = "";
 
-    if (argc >= 3) {
-        wasm_module_name = argv[2];
-    }
+    // if (argc >= 3) {
+    //     wasm_module_name = argv[2];
+    // }
 
     void* library = open_lib(wasm2c_module_path);
     char* info_func_name = get_info_func_name(wasm_module_name);
@@ -109,7 +131,71 @@ int main(int argc, char const *argv[])
     /*
      * Create runtime_metadata struct and pass through to create_wasm2c_sandbox func
      * */
-    wasm2c_rt_init_data init_data = {NULL, NULL, NULL, NULL}; 
+
+    // TODO: maybe it makes sense to allow no fs access instead of default . ???
+    wasm2c_rt_init_data init_data = {".", "", 0, "", 0, ""}; 
+
+    int c;
+    while (1)
+    {
+      static struct option long_options[] =
+        {
+          /* These options set a flag. */
+          {"homedir", required_argument, NULL, 'd'},
+          {"args", required_argument, NULL, 'a'},
+          {"env", required_argument, NULL, 'e'},
+          {"log_path", required_argument, NULL, 'l'},
+
+          {0, 0, 0, 0}
+        };
+      /* getopt_long stores the option index here. */
+      int option_index = 0;
+
+      c = getopt_long (argc, argv, "l:a:e:d:", long_options, &option_index);
+
+      switch(c)
+      {
+         case -1:       /* no more arguments */
+         case 0:        /* long options toggles */
+         break;
+
+        case 'l':
+          printf("log file = \"%s\"\n", optarg);
+          init_data.log_path = optarg;
+          break;
+
+        case 'a':
+          printf("args = \"%s\"\n", optarg);
+          init_data.args = optarg;
+          break;
+         
+        case 'e':
+          printf("env = \"%s\"\n", optarg);
+          init_data.env = optarg;
+          break;
+        
+        case 'd':
+          printf("homedir = \"%s\"\n", optarg);
+          init_data.homedir = optarg;
+          break;
+
+         default:
+         abort();
+         return(-2);
+      };
+
+      /* Detect the end of the options. */
+      if (c == -1)
+        break;
+    }
+
+    init_data.argc = count_words(init_data.args);
+    init_data.envc = count_words(init_data.env);
+    printf("argc = %d\n", init_data.argc);
+
+    
+
+
     void* sandbox = sandbox_info.create_wasm2c_sandbox(&init_data);
     if (!sandbox) {
         printf("Error: Could not create sandbox" LINETERM);
