@@ -771,7 +771,7 @@ void wasm_rt_sys_init() {
   os_init();
 }
 
-VmCtx* wasm_rt_init_wasi(wasm_rt_memory_t* mem, wasm2c_rt_init_data const* init_data) {
+VmCtx* wasm_rt_init_wasi(wasm_rt_memory_t* mem, wasm2c_rt_init_data *init_data) {
   return veriwasi_init(mem->data, mem->size);
   // init_fds(wasi_data);
   // os_clock_init(&(wasi_data->clock_data));
