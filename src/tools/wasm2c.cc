@@ -99,6 +99,37 @@ static void ParseOptions(int argc, char** argv) {
   }
 }
 
+// Taken from upstream wasm2c
+// fixes problem where header path is wrong if you output to a different directory from 
+// i.e. if you do wasm2c ... -o ../cool.c then header looks for ../cool.h from the .. dir
+string_view GetBasename(string_view filename) {
+  size_t last_slash = filename.find_last_of('/');
+  size_t last_backslash = filename.find_last_of('\\');
+  if (last_slash == string_view::npos && last_backslash == string_view::npos) {
+    return filename;
+  }
+
+  if (last_slash == string_view::npos) {
+    if (last_backslash == string_view::npos) {
+      return filename;
+    }
+    last_slash = last_backslash;
+  } else if (last_backslash != string_view::npos) {
+    last_slash = std::max(last_slash, last_backslash);
+  }
+
+  return filename.substr(last_slash + 1);
+}
+
+string_view GetExtension(string_view filename) {
+  size_t pos = filename.find_last_of('.');
+  if (pos == string_view::npos) {
+    return "";
+  }
+  return filename.substr(pos);
+}
+
+
 // TODO(binji): copied from binary-writer-spec.cc, probably should share.
 static string_view strip_extension(string_view s) {
   string_view ext = s.substr(s.find_last_of('.'));
@@ -144,7 +175,7 @@ int ProgramMain(int argc, char** argv) {
       if (Succeeded(result)) {
         if (!s_outfile.empty()) {
           std::string header_name =
-              strip_extension(s_outfile).to_string() + ".h";
+              getBaseName(strip_extension(s_outfile).to_string() + ".h");
           FileStream c_stream(s_outfile.c_str());
           FileStream h_stream(header_name);
           result = WriteC(&c_stream, &h_stream, header_name.c_str(), &module,
