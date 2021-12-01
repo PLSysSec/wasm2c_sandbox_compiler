@@ -174,10 +174,11 @@ int ProgramMain(int argc, char** argv) {
 
       if (Succeeded(result)) {
         if (!s_outfile.empty()) {
-          std::string header_name =
-              GetBasename(strip_extension(s_outfile)).to_string() + ".h";
+          std::string header_name_full =
+              strip_extension(s_outfile).to_string() + ".h";
+	  std::string header_name = GetBasename(strip_extension(s_outfile)).to_string() + ".h";
           FileStream c_stream(s_outfile.c_str());
-          FileStream h_stream(header_name);
+          FileStream h_stream(header_name_full);
           result = WriteC(&c_stream, &h_stream, header_name.c_str(), &module,
                           s_write_c_options);
         } else {

@@ -160,28 +160,28 @@ int main(int argc, char const *argv[])
          break;
 
         case 'l':
-          printf("log file = \"%s\"\n", optarg);
+          //printf("log file = \"%s\"\n", optarg);
           char *log_path = (char*)malloc(1024+1);
           snprintf(log_path, 1024, "%s", optarg );
           init_data.log_path = log_path;
           break;
 
         case 'a':
-          printf("args = \"%s\"\n", optarg);
+          //printf("args = \"%s\"\n", optarg);
           char *args = (char*)malloc(1024+1);
           snprintf(args, 1024, "%s", optarg );
           init_data.args = args;
           break;
          
         case 'e':
-          printf("env = \"%s\"\n", optarg);
+          //printf("env = \"%s\"\n", optarg);
           char *env = (char*)malloc(1024+1);
           snprintf(env, 1024, "%s", optarg );
           init_data.env = env;
           break;
         
         case 'd':
-          printf("homedir = \"%s\"\n", optarg);
+          //printf("homedir = \"%s\"\n", optarg);
           char *homedir = (char*)malloc(1024+1);
           snprintf(homedir, 1024, "%s", optarg );
           init_data.homedir = homedir;
@@ -199,7 +199,7 @@ int main(int argc, char const *argv[])
 
     init_data.argc = count_words(init_data.args);
     init_data.envc = count_words(init_data.env);
-    printf("argc = %d\n", init_data.argc);
+    //printf("argc = %d\n", init_data.argc);
 
     
 
