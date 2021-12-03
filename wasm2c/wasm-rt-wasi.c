@@ -801,7 +801,7 @@ VmCtx* wasm_rt_init_wasi(wasm_rt_memory_t* mem, wasm2c_rt_init_data *init_data) 
   // (void) wasm_i64_store32;
 }
 
-void wasm_rt_cleanup_wasi(VmCtx* wasi_data) {
+void wasm_rt_cleanup_wasi(VmCtx* ctx) {
   // os_clock_cleanup(&(wasi_data->clock_data));
-  // veriwasi_cleanup()
+   veriwasi_cleanup(ctx);
 }
