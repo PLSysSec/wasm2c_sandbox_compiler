@@ -7,6 +7,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <getopt.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 
 #include "wasm-rt.h"
 
@@ -106,6 +109,48 @@ char* get_info_func_name(char const * wasm_module_name) {
     return info_func_str;
 }
 
+// Parses a triple of the for protocol:ip:port
+net_triple parse_triple(char* triple){
+    net_triple output;
+    char* protocol = strtok (triple, ":");
+    char* addr = strtok(NULL, ":");
+    char* port = strtok(NULL, ":");
+    if (protocol == NULL || addr == NULL || port == NULL) {
+      printf("Incomplete netlist triple\n");
+      exit(1);
+    }
+    if (strcmp(protocol,"TCP") == 0){
+      output.protocol = 1;
+    }
+    else if (strcmp(protocol,"UDP") == 0){
+      output.protocol = 2;
+    }
+    else{
+      printf("Unknown protocol, please choose TCP or UDP (uppercase please)\n");
+      exit(1);
+    }
+    in_addr_t parsed_addr = inet_addr(addr);
+    unsigned parsed_port;
+    sscanf (port, "%u", &parsed_port);
+
+    output.addr = parsed_addr;
+    output.port = parsed_port;
+
+    return output;
+}
+
+// Parses a comma-seperated string of triples of the form protocol:ip:port
+net_triple* parse_netlist(char* s){
+  int i = 0;
+  net_triple *output = calloc(4, sizeof(net_triple));
+  char* triple = strtok (s, ",");
+  while (triple != NULL && i < 4)
+  {
+      output[i++] = parse_triple(triple);
+      triple = strtok (NULL, ",");
+  }
+}
+
 typedef wasm2c_sandbox_funcs_t(*get_info_func_t)();
 typedef void (*wasm2c_start_func_t)(void* sbx);
 
@@ -133,7 +178,7 @@ int main(int argc, char const *argv[])
      * */
 
     // TODO: maybe it makes sense to allow no fs access instead of default . ???
-    wasm2c_rt_init_data init_data = {".", "", 0, "", 0, ""}; 
+    wasm2c_rt_init_data init_data = {".", "", 0, "", 0, "", NULL}; 
 
     int c;
     while (1)
@@ -145,13 +190,14 @@ int main(int argc, char const *argv[])
           {"args", required_argument, NULL, 'a'},
           {"env", required_argument, NULL, 'e'},
           {"log_path", required_argument, NULL, 'l'},
+          {"netlist", required_argument, NULL, 'n'},
 
           {0, 0, 0, 0}
         };
       /* getopt_long stores the option index here. */
       int option_index = 0;
 
-      c = getopt_long (argc, argv, "l:a:e:d:", long_options, &option_index);
+      c = getopt_long (argc, argv, "l:a:e:d:n:", long_options, &option_index);
 
       switch(c)
       {
@@ -160,7 +206,6 @@ int main(int argc, char const *argv[])
          break;
 
         case 'l':
-          //printf("log file = \"%s\"\n", optarg);
           char *log_path = (char*)malloc(1024+1);
           snprintf(log_path, 1024, "%s", optarg );
           init_data.log_path = log_path;
@@ -185,6 +230,10 @@ int main(int argc, char const *argv[])
           char *homedir = (char*)malloc(1024+1);
           snprintf(homedir, 1024, "%s", optarg );
           init_data.homedir = homedir;
+          break;
+
+          case 'n':
+          init_data.netlist = parse_netlist(optarg);
           break;
 
          default:

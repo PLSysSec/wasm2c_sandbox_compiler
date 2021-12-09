@@ -161,6 +161,12 @@ typedef struct wasm_sandbox_wasi_data {
 } wasm_sandbox_wasi_data;
 */
 
+typedef struct net_triple {
+  unsigned protocol;
+  unsigned addr;
+  unsigned port;
+} net_triple;
+
 typedef struct wasm2c_rt_init_data {
   char* homedir;
 	unsigned char* args;
@@ -168,6 +174,7 @@ typedef struct wasm2c_rt_init_data {
   unsigned char* env;
   uint32_t envc;
   char* log_path;
+  net_triple *netlist; // up to 4 addresses the sandbox can access
 } wasm2c_rt_init_data;
 
 typedef void (*wasm_rt_sys_init_t)(void);
