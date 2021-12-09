@@ -772,33 +772,7 @@ void wasm_rt_sys_init() {
 }
 
 VmCtx* wasm_rt_init_wasi(wasm_rt_memory_t* mem, wasm2c_rt_init_data *init_data) {
-  return veriwasi_init(mem->data, mem->size, init_data->homedir, init_data->args, init_data-> argc, init_data->env, init_data->envc, init_data->log_path);
-  // init_fds(wasi_data);
-  // os_clock_init(&(wasi_data->clock_data));
-  // // Remove unused function warnings
-  // (void) wasm_i32_load;
-  // (void) wasm_i64_load;
-  // (void) wasm_f32_load;
-  // (void) wasm_f64_load;
-  // (void) wasm_i32_load8_s;
-  // (void) wasm_i64_load8_s;
-  // (void) wasm_i32_load8_u;
-  // (void) wasm_i64_load8_u;
-  // (void) wasm_i32_load16_s;
-  // (void) wasm_i64_load16_s;
-  // (void) wasm_i32_load16_u;
-  // (void) wasm_i64_load16_u;
-  // (void) wasm_i64_load32_s;
-  // (void) wasm_i64_load32_u;
-  // (void) wasm_i32_store;
-  // (void) wasm_i64_store;
-  // (void) wasm_f32_store;
-  // (void) wasm_f64_store;
-  // (void) wasm_i32_store8;
-  // (void) wasm_i32_store16;
-  // (void) wasm_i64_store8;
-  // (void) wasm_i64_store16;
-  // (void) wasm_i64_store32;
+  return veriwasi_init(mem->data, mem->size, init_data->homedir, init_data->args, init_data-> argc, init_data->env, init_data->envc, init_data->log_path, init_data->netlist);
 }
 
 void wasm_rt_cleanup_wasi(VmCtx* ctx) {
