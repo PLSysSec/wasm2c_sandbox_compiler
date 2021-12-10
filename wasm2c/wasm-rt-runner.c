@@ -111,10 +111,11 @@ char* get_info_func_name(char const * wasm_module_name) {
 
 // Parses a triple of the for protocol:ip:port
 net_triple parse_triple(char* triple){
+    char* saveptr;
     net_triple output;
-    char* protocol = strtok (triple, ":");
-    char* addr = strtok(NULL, ":");
-    char* port = strtok(NULL, ",");
+    char* protocol = strtok_r(triple, ":", saveptr);
+    char* addr = strtok_r(NULL, ":", saveptr);
+    char* port = strtok_r(NULL, "", saveptr);
     if (protocol == NULL || addr == NULL || port == NULL) {
       printf("Incomplete netlist triple\n");
       exit(1);
@@ -142,12 +143,13 @@ net_triple parse_triple(char* triple){
 // Parses a comma-seperated string of triples of the form protocol:ip:port
 net_triple* parse_netlist(char* s){
   int i = 0;
+  char* saveptr;
   net_triple *output = calloc(4, sizeof(net_triple));
-  char* triple = strtok (s, ",");
+  char* triple = strtok_r(s, ",", saveptr);
   while (triple != NULL && i < 4)
   {
       output[i++] = parse_triple(triple);
-      triple = strtok (NULL, ",");
+      triple = strtok_r(NULL, ",", saveptr);
   }
   return output;
 }
