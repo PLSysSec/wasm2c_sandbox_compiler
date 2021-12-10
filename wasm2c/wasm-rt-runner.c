@@ -149,6 +149,7 @@ net_triple* parse_netlist(char* s){
       output[i++] = parse_triple(triple);
       triple = strtok (NULL, ",");
   }
+  return output;
 }
 
 typedef wasm2c_sandbox_funcs_t(*get_info_func_t)();
