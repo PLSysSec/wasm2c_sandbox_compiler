@@ -114,7 +114,7 @@ net_triple parse_triple(char* triple){
     net_triple output;
     char* protocol = strtok (triple, ":");
     char* addr = strtok(NULL, ":");
-    char* port = strtok(NULL, ":");
+    char* port = strtok(NULL, ",");
     if (protocol == NULL || addr == NULL || port == NULL) {
       printf("Incomplete netlist triple\n");
       exit(1);
