@@ -250,6 +250,11 @@ int main(int argc, char const *argv[])
     init_data.envc = count_words(init_data.env);
     //printf("argc = %d\n", init_data.argc);
 
+    // If we didn't load a netlist, create a zero-filled one.
+    if (init_data.netlist == NULL){
+      init_data.netlist = calloc(4, sizeof(net_triple));
+    }
+
     
 
 
