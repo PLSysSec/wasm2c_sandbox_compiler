@@ -113,9 +113,9 @@ char* get_info_func_name(char const * wasm_module_name) {
 net_triple parse_triple(char* triple){
     char* saveptr;
     net_triple output;
-    char* protocol = strtok_r(triple, ":", saveptr);
-    char* addr = strtok_r(NULL, ":", saveptr);
-    char* port = strtok_r(NULL, "", saveptr);
+    char* protocol = strtok_r(triple, ":", &saveptr);
+    char* addr = strtok_r(NULL, ":", &saveptr);
+    char* port = strtok_r(NULL, "", &saveptr);
     if (protocol == NULL || addr == NULL || port == NULL) {
       printf("Incomplete netlist triple\n");
       exit(1);
@@ -145,11 +145,11 @@ net_triple* parse_netlist(char* s){
   int i = 0;
   char* saveptr;
   net_triple *output = calloc(4, sizeof(net_triple));
-  char* triple = strtok_r(s, ",", saveptr);
+  char* triple = strtok_r(s, ",", &saveptr);
   while (triple != NULL && i < 4)
   {
       output[i++] = parse_triple(triple);
-      triple = strtok_r(NULL, ",", saveptr);
+      triple = strtok_r(NULL, ",", &saveptr);
   }
   return output;
 }
