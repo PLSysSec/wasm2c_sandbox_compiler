@@ -208,40 +208,46 @@ int main(int argc, char const *argv[])
          case 0:        /* long options toggles */
          break;
 
-        case 'l':
+        case 'l': {
           char *log_path = (char*)malloc(1024+1);
           snprintf(log_path, 1024, "%s", optarg );
           init_data.log_path = log_path;
           break;
+        }
 
-        case 'a':
+        case 'a': {
           //printf("args = \"%s\"\n", optarg);
           char *args = (char*)malloc(1024+1);
           snprintf(args, 1024, "%s", optarg );
           init_data.args = args;
           break;
+        }
          
-        case 'e':
+        case 'e': {
           //printf("env = \"%s\"\n", optarg);
           char *env = (char*)malloc(1024+1);
           snprintf(env, 1024, "%s", optarg );
           init_data.env = env;
           break;
+        }
         
-        case 'd':
+        case 'd': {
           //printf("homedir = \"%s\"\n", optarg);
           char *homedir = (char*)malloc(1024+1);
           snprintf(homedir, 1024, "%s", optarg );
           init_data.homedir = homedir;
           break;
+        }
 
-          case 'n':
+        case 'n': {
           init_data.netlist = parse_netlist(optarg);
           break;
+        }
 
-         default:
-         abort();
-         return(-2);
+         default: {
+           abort();
+           return(-2);
+         }
       };
 
       /* Detect the end of the options. */

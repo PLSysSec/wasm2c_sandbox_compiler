@@ -107,6 +107,10 @@ if (WIN32)
   check_symbol_exists(ENABLE_VIRTUAL_TERMINAL_PROCESSING "windows.h" HAVE_WIN32_VT100)
 endif ()
 
+if (APPLE)
+  add_link_options(-undefined dynamic_lookup)
+endif ()
+
 include(CheckTypeSize)
 check_type_size(ssize_t SSIZE_T)
 check_type_size(size_t SIZEOF_SIZE_T)
