@@ -554,46 +554,60 @@ STUB_IMPORT_IMPL(u32,
 ////////////// Unsupported WASI APIs
 // errno_t fd_advise(void* ctx, fd_t fd, filesize_t offset, filesize_t len,
 // advice_t advice); errno_t fd_allocate(void* ctx, fd_t fd, filesize_t offset,
-// filesize_t len); errno_t fd_datasync(void* ctx, fd_t fd); errno_t
+// filesize_t len); 
+// errno_t fd_datasync(void* ctx, fd_t fd); errno_t
 // fd_fdstat_get(void* ctx, fd_t fd, fdstat_t* buf); errno_t
 // fd_fdstat_set_flags(void* ctx, fd_t fd, fdflags_t flags); errno_t
 // fd_fdstat_set_rights(void* ctx, fd_t fd, rights_t fs_rights_base, rights_t
-// fs_rights_inheriting); errno_t fd_filestat_get(void* ctx, fd_t fd,
-// filestat_t* buf); errno_t fd_filestat_set_size(void* ctx, fd_t fd, filesize_t
-// st_size); errno_t fd_filestat_set_times(void* ctx, fd_t fd, timestamp_t
-// st_atim, timestamp_t st_mtim, fstflags_t fst_flags); errno_t fd_pread(void*
+// fs_rights_inheriting); 
+// errno_t fd_filestat_get(void* ctx, fd_t fd, filestat_t* buf); 
+// errno_t fd_filestat_set_size(void* ctx, fd_t fd, filesize_t
+// st_size); 
+// errno_t fd_filestat_set_times(void* ctx, fd_t fd, timestamp_t
+// st_atim, timestamp_t st_mtim, fstflags_t fst_flags); 
+// errno_t fd_pread(void*
 // ctx, fd_t fd, const iovec_t* iovs, size_t iovs_len, filesize_t offset,
-// size_t* nread); errno_t fd_prestat_dir_name(void* ctx, fd_t fd, char* path,
-// size_t path_len); errno_t fd_pwrite(void* ctx, fd_t fd, const ciovec_t* iovs,
-// size_t iovs_len, filesize_t offset, size_t* nwritten); errno_t
-// fd_readdir(void* ctx, fd_t fd, void* buf, size_t buf_len, dircookie_t cookie,
-// size_t* bufused); errno_t fd_renumber(void* ctx, fd_t from, fd_t to); errno_t
-// fd_sync(void* ctx, fd_t fd); errno_t fd_tell(void* ctx, fd_t fd, filesize_t*
-// offset); errno_t path_create_directory(void* ctx, fd_t fd, const char* path,
-// size_t path_len); errno_t path_filestat_get(void* ctx, fd_t fd, lookupflags_t
-// flags, const char* path, size_t path_len, filestat_t* buf); errno_t
-// path_filestat_set_times(void* ctx, fd_t fd, lookupflags_t flags, const char*
+// size_t* nread); 
+// errno_t fd_prestat_dir_name(void* ctx, fd_t fd, char* path,
+// size_t path_len); 
+// errno_t fd_pwrite(void* ctx, fd_t fd, const ciovec_t* iovs,
+// size_t iovs_len, filesize_t offset, size_t* nwritten); 
+// errno_t fd_readdir(void* ctx, fd_t fd, void* buf, size_t buf_len, dircookie_t cookie,
+// size_t* bufused); 
+// errno_t fd_renumber(void* ctx, fd_t from, fd_t to); 
+// errno_t fd_sync(void* ctx, fd_t fd); 
+// errno_t fd_tell(void* ctx, fd_t fd, filesize_t*
+// offset); 
+// errno_t path_create_directory(void* ctx, fd_t fd, const char* path, size_t path_len); 
+// errno_t path_filestat_get(void* ctx, fd_t fd, lookupflags_t flags, const char* path, size_t path_len, filestat_t* buf); 
+// errno_t path_filestat_set_times(void* ctx, fd_t fd, lookupflags_t flags, const char*
 // path, size_t path_len, timestamp_t st_atim, timestamp_t st_mtim, fstflags_t
-// fst_flags); errno_t path_link(void* ctx, fd_t old_fd, lookupflags_t
+// fst_flags); 
+// errno_t path_link(void* ctx, fd_t old_fd, lookupflags_t
 // old_flags, const char* old_path, size_t old_path_len, fd_t new_fd, const
-// char* new_path, size_t new_path_len); errno_t path_open(void* ctx, fd_t
+// char* new_path, size_t new_path_len); 
+// errno_t path_open(void* ctx, fd_t
 // dirfd, lookupflags_t dirflags, const char* path, size_t path_len, oflags_t
 // o_flags, rights_t fs_rights_base, rights_t fs_rights_inheriting, fdflags_t
-// fs_flags, fd_t* fd); errno_t path_readlink(void* ctx, fd_t fd, const char*
-// path, size_t path_len, char* buf, size_t buf_len, size_t* bufused); errno_t
-// path_remove_directory(void* ctx, fd_t fd, const char* path, size_t path_len);
+// fs_flags, fd_t* fd); 
+// errno_t path_readlink(void* ctx, fd_t fd, const char*
+// path, size_t path_len, char* buf, size_t buf_len, size_t* bufused); 
+// errno_t path_remove_directory(void* ctx, fd_t fd, const char* path, size_t path_len);
 // errno_t path_rename(void* ctx, fd_t old_fd, const char* old_path, size_t
 // old_path_len, fd_t new_fd, const char* new_path, size_t new_path_len);
 // errno_t path_symlink(void* ctx, const char* old_path, size_t old_path_len,
-// fd_t fd, const char* new_path, size_t new_path_len); errno_t
-// path_unlink_file(void* ctx, fd_t fd, const char* path, size_t path_len);
+// fd_t fd, const char* new_path, size_t new_path_len); 
+// errno_t path_unlink_file(void* ctx, fd_t fd, const char* path, size_t path_len);
 // errno_t poll_oneoff(void* ctx, const subscription_t* in, event_t* out, size_t
-// nsubscriptions, size_t* nevents); errno_t proc_raise(void* ctx, signal_t
-// sig); errno_t random_get(void* ctx, void* buf, size_t buf_len); errno_t
-// sched_yield(t* uvwasi); errno_t sock_recv(void* ctx, fd_t sock, const
+// nsubscriptions, size_t* nevents); 
+// errno_t proc_raise(void* ctx, signal_t sig); 
+// errno_t random_get(void* ctx, void* buf, size_t buf_len); 
+// errno_t sched_yield(t* uvwasi); 
+// errno_t sock_recv(void* ctx, fd_t sock, const
 // iovec_t* ri_data, size_t ri_data_len, riflags_t ri_flags, size_t* ro_datalen,
-// roflags_t* ro_flags); errno_t sock_send(void* ctx, fd_t sock, const ciovec_t*
-// si_data, size_t si_data_len, siflags_t si_flags, size_t* so_datalen); errno_t
+// roflags_t* ro_flags); 
+
+// errno_t sock_send(void* ctx, fd_t sock, const ciovec_t* si_data, size_t si_data_len, siflags_t si_flags, size_t* so_datalen); errno_t
 // sock_shutdown(void* ctx, fd_t sock, sdflags_t how);
 
 // Bad file descriptor.
@@ -605,137 +619,137 @@ STUB_IMPORT_IMPL(u32,
 #define WASI_DEFAULT_ERROR WASI_PERM_ERROR
 
 
-u32 Z_wasi_snapshot_preview1Z_fd_adviseZ_iijji(u32 a, u64 b, u64 c, u32 d){
+u32 Z_wasi_snapshot_preview1Z_fd_adviseZ_iijji(wasm_sandbox_wasi_data* wasi_data, u32 fd, u64 offset, u64 len, u32 advice){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_fd_allocateZ_iijj(u32 a, u64 b, u64 c){
+u32 Z_wasi_snapshot_preview1Z_fd_allocateZ_iijj(wasm_sandbox_wasi_data* wasi_data, u32 fd, u64 offset, u64 len){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_fd_datasyncZ_ii(u32 a){
+u32 Z_wasi_snapshot_preview1Z_fd_datasyncZ_ii(wasm_sandbox_wasi_data* wasi_data, u32 fd){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_fd_fdstat_getZ_iii(u32 a, u32 b){
-    return WASI_DEFAULT_ERROR;
-}
-
-
-u32 Z_wasi_snapshot_preview1Z_fd_fdstat_set_flagsZ_iii(u32 a, u32 b){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_fd_fdstat_set_rightsZ_iijj(u32 a, u64 b, u64 c){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_fd_filestat_getZ_iii(u32 a, u32 b){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_fd_filestat_set_sizeZ_iij(u32 a, u64 b){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_fd_filestat_set_timesZ_iijji(u32 a, u64 b, u64 c, u32 d){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_fd_preadZ_iiiiji(u32 a, u32 b, u32 c, u64 d, u32 e){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_fd_prestat_dir_nameZ_iiii(u32 a, u32 b, u32 c){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_fd_pwriteZ_iiiiji(u32 a, u32 b, u32 c, u64 d, u32 e){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_fd_readdirZ_iiiiji(u32 a, u32 b, u32 c, u64 d, u32 e){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_fd_renumberZ_iii(u32 a, u32 b){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_fd_syncZ_ii(u32 a){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_fd_tellZ_iii(u32 a, u32 b){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_path_create_directoryZ_iiii(u32 a, u32 b, u32 c){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_path_filestat_getZ_iiiiii(u32 a, u32 b, u32 c, u32 d, u32 e){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_path_filestat_set_timesZ_iiiiijji(u32 a, u32 b, u32 c, u32 d, u64 e, u64 f, u32 g){
-    return WASI_DEFAULT_ERROR;
-}
-
-u32 Z_wasi_snapshot_preview1Z_path_linkZ_iiiiiiii(u32 a, u32 b, u32 c, u32 d, u32 e, u32 f, u32 g){
+u32 Z_wasi_snapshot_preview1Z_fd_fdstat_getZ_iii(wasm_sandbox_wasi_data* wasi_data, u32 fd, u32 buf){
     return WASI_DEFAULT_ERROR;
 }
 
 
-u32 Z_wasi_snapshot_preview1Z_path_openZ_iiiiiijjii(u32 a, u32 b, u32 c, u32 d, u32 e, u64 f, u64 g, u32 h, u32 i){
+u32 Z_wasi_snapshot_preview1Z_fd_fdstat_set_flagsZ_iii(wasm_sandbox_wasi_data* wasi_data, u32 fd, u32 flags){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_path_readlinkZ_iiiiiii(u32 a, u32 b, u32 c, u32 d, u32 e, u32 f){
+u32 Z_wasi_snapshot_preview1Z_fd_fdstat_set_rightsZ_iijj(wasm_sandbox_wasi_data* wasi_data, u32 fd, u64 fs_rights_base, u64 fs_rights_inheriting){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_path_remove_directoryZ_iiii(u32 a, u32 b, u32 c){
+u32 Z_wasi_snapshot_preview1Z_fd_filestat_getZ_iii(wasm_sandbox_wasi_data* wasi_data, u32 fd, u32 buf){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_path_renameZ_iiiiiii(u32 a, u32 b, u32 c, u32 d, u32 e, u32 f){
+u32 Z_wasi_snapshot_preview1Z_fd_filestat_set_sizeZ_iij(wasm_sandbox_wasi_data* wasi_data, u32 fd, u64 st_size){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_path_symlinkZ_iiiiii(u32 a, u32 b, u32 c, u32 d, u32 e){
+u32 Z_wasi_snapshot_preview1Z_fd_filestat_set_timesZ_iijji(wasm_sandbox_wasi_data* wasi_data, u32 fd, u64 st_atim, u64 st_mtim, u32 fst_flags){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_path_unlink_fileZ_iiii(u32 a, u32 b, u32 c){
+u32 Z_wasi_snapshot_preview1Z_fd_preadZ_iiiiji(wasm_sandbox_wasi_data* wasi_data, u32 fd, u32 iovs, u32 iovs_len, u64 offset, u32 nread){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_poll_oneoffZ_iiiii(u32 a, u32 b, u32 c, u32 d){
+u32 Z_wasi_snapshot_preview1Z_fd_prestat_dir_nameZ_iiii(wasm_sandbox_wasi_data* wasi_data, u32 fd, u32 path, u32 path_len){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_proc_raiseZ_ii(u32 a){
+u32 Z_wasi_snapshot_preview1Z_fd_pwriteZ_iiiiji(wasm_sandbox_wasi_data* wasi_data, u32 fd, u32 iovs, u32 iovs_len, u64 offset, u32 nwritten){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_random_getZ_iii(u32 a, u32 b){
+u32 Z_wasi_snapshot_preview1Z_fd_readdirZ_iiiiji(wasm_sandbox_wasi_data* wasi_data, u32 fd, u32 buf, u32 buf_len, u64 cookie, u32 bufused){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_sched_yieldZ_i(){
+u32 Z_wasi_snapshot_preview1Z_fd_renumberZ_iii(wasm_sandbox_wasi_data* wasi_data, u32 from, u32 to){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_sock_recvZ_iiiiiii(u32 a, u32 b, u32 c, u32 d, u32 e, u32 f){
+u32 Z_wasi_snapshot_preview1Z_fd_syncZ_ii(wasm_sandbox_wasi_data* wasi_data, u32 fd){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_sock_sendZ_iiiiii(u32 a, u32 b, u32 c, u32 d, u32 e){
+u32 Z_wasi_snapshot_preview1Z_fd_tellZ_iii(wasm_sandbox_wasi_data* wasi_data, u32 fd, u32 offset){
     return WASI_DEFAULT_ERROR;
 }
 
-u32 Z_wasi_snapshot_preview1Z_sock_shutdownZ_iii(u32 a, u32 b){
+u32 Z_wasi_snapshot_preview1Z_path_create_directoryZ_iiii(wasm_sandbox_wasi_data* wasi_data, u32 fd, u32 path, u32 path_len){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_path_filestat_getZ_iiiiii(wasm_sandbox_wasi_data* wasi_data, u32 fd, u32 flags, u32 path, u32 path_len, u32 buf){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_path_filestat_set_timesZ_iiiiijji(wasm_sandbox_wasi_data* wasi_data, u32 fd, u32 flags, u32 path, u32 path_len, u64 st_atim, u64 st_mtim, u32 fst_flags){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_path_linkZ_iiiiiiii(wasm_sandbox_wasi_data* wasi_data, u32 old_fs, u32 old_flags, u32 old_path, u32 old_path_len, u32 new_fd, u32 new_path, u32 new_path_len){
+    return WASI_DEFAULT_ERROR;
+}
+
+
+u32 Z_wasi_snapshot_preview1Z_path_openZ_iiiiiijjii(wasm_sandbox_wasi_data* wasi_data, u32 dirfd, u32 dirflags, u32 path, u32 path_len, u32 o_flags, u64 fs_rights_base, u64 fs_rights_inheriting, u32 fs_flags, u32 fd){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_path_readlinkZ_iiiiiii(wasm_sandbox_wasi_data* wasi_data, u32 fd, u32 path, u32 path_len, u32 buf, u32 buflen, u32 bufused){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_path_remove_directoryZ_iiii(wasm_sandbox_wasi_data* wasi_data, u32 fd, u32 path, u32 path_len){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_path_renameZ_iiiiiii(wasm_sandbox_wasi_data* wasi_data, u32 old_fd, u32 old_path, u32 old_path_len, u32 new_fd, u32 new_path, u32 new_path_len){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_path_symlinkZ_iiiiii(wasm_sandbox_wasi_data* wasi_data, u32 old_path, u32 old_path_len, u32 fd, u32 new_path, u32 new_path_len){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_path_unlink_fileZ_iiii(wasm_sandbox_wasi_data* wasi_data, u32 fd, u32 path, u32 path_len){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_poll_oneoffZ_iiiii(wasm_sandbox_wasi_data* wasi_data, u32 in, u32 out, u32 nsubscriptions, u32 nevents){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_proc_raiseZ_ii(wasm_sandbox_wasi_data* wasi_data, u32 sig){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_random_getZ_iii(wasm_sandbox_wasi_data* wasi_data, u32 buf, u32 buf_len){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_sched_yieldZ_i(wasm_sandbox_wasi_data* wasi_data){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_sock_recvZ_iiiiiii(wasm_sandbox_wasi_data* wasi_data, u32 sock, u32 ri_data, u32 ri_data_leb, u32 ri_flags, u32 ro_datalen, u32 ro_flags){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_sock_sendZ_iiiiii(wasm_sandbox_wasi_data* wasi_data, u32 sock, u32 si_data, u32 si_data_len, u32 si_flags, u32 so_datalen){
+    return WASI_DEFAULT_ERROR;
+}
+
+u32 Z_wasi_snapshot_preview1Z_sock_shutdownZ_iii(wasm_sandbox_wasi_data* wasi_data, u32 sock, u32 how){
     return WASI_DEFAULT_ERROR;
 }
 
