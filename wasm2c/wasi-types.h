@@ -2,6 +2,9 @@
 #include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdbool.h> 
+#include <sys/socket.h> 
+#include <time.h> 
 
 typedef uint8_t u8;
 typedef int8_t s8;
@@ -14,15 +17,6 @@ typedef int64_t s64;
 typedef float f32;
 typedef double f64;
 
-s32 from_syscall_ret(s32 ret){
-    if (ret >= 0) {
-        return ret;
-    }
-    if (ret <= -4096) {
-        return EINVAL;
-    }
-    return errno_to_wasi(ret); // TODO: should be negative?
-}
 
 // errno
 // s32 errno_to_native(s32 errno){}
@@ -52,10 +46,20 @@ s32 errno_to_wasi(s32 clockid){
         case ENOTEMPTY  : return 55;
         case ENOTSOCK  : return 57;
         case EOVERFLOW  : return 61;
-        default : assert(false); // Unknown error? 
+        default : assert(0); // Unknown error? 
     }
 }
 
+
+s32 from_syscall_ret(s32 ret){
+    if (ret >= 0) {
+        return ret;
+    }
+    if (ret <= -4096) {
+        return EINVAL;
+    }
+    return errno_to_wasi(ret); // TODO: should be negative?
+}
 
 // __WASI_ERRNO_NETUNREACH (UINT16_C(40))
 // __WASI_ERRNO_NFILE (UINT16_C(41))
@@ -175,7 +179,7 @@ s32 filetype_to_native(s32 filetype){
         case 4  : return S_IFREG;
         case 5  : return S_IFSOCK; // 5 is Dgram, 6 is Stream
         case 6  : return S_IFSOCK;
-        case 7  : return S_IFLINK; 
+        case 7  : return S_IFLNK; 
         default : return 0; // Unknown
     }
 }
@@ -187,7 +191,7 @@ s32 filetype_to_wasi(s32 filetype){
         case S_IFDIR  : return 3;
         case S_IFREG  : return 4;
         case S_IFSOCK  : return 6; // 5 is Dgram, 6 is Stream
-        case S_IFLINK  : return 5;
+        case S_IFLNK  : return 5;
         default : return 0; // Unknown
     }
 }
