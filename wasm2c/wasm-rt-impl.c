@@ -96,101 +96,101 @@ void wasm_rt_cleanup_func_types(wasm_func_type_t** p_func_type_structs, uint32_t
   free(*p_func_type_structs);
 }
 
-void wasm_rt_allocate_memory(wasm_rt_memory_t* memory,
-                             uint32_t initial_pages,
-                             uint32_t max_pages) {
-  uint32_t byte_length = initial_pages * WASM_PAGE_SIZE;
-#if WASM_USING_GUARD_PAGES == 1
-  /* Reserve 8GiB, aligned to 4GB. */
-  const size_t heap_alignment = 0x100000000ull;
-  const size_t reserve_size = 0x200000000ull;
-  const uint32_t chosen_max_pages = max_pages;
-#else
-  /* Reserve 8MB, aligned to 8MB. */
-  const size_t heap_alignment = 0x800000ul;
-  const size_t reserve_size = 0x800000ul;
-  const uint32_t allowed_max_pages = reserve_size / WASM_PAGE_SIZE;
-  uint32_t chosen_max_pages = max_pages;
-  if (allowed_max_pages < max_pages) {
-    chosen_max_pages = allowed_max_pages;
-  }
-#endif
+// void wasm_rt_allocate_memory(wasm_rt_memory_t* memory,
+//                              uint32_t initial_pages,
+//                              uint32_t max_pages) {
+//   uint32_t byte_length = initial_pages * WASM_PAGE_SIZE;
+// #if WASM_USING_GUARD_PAGES == 1
+//   /* Reserve 8GiB, aligned to 4GB. */
+//   const size_t heap_alignment = 0x100000000ull;
+//   const size_t reserve_size = 0x200000000ull;
+//   const uint32_t chosen_max_pages = max_pages;
+// #else
+//   /* Reserve 8MB, aligned to 8MB. */
+//   const size_t heap_alignment = 0x800000ul;
+//   const size_t reserve_size = 0x800000ul;
+//   const uint32_t allowed_max_pages = reserve_size / WASM_PAGE_SIZE;
+//   uint32_t chosen_max_pages = max_pages;
+//   if (allowed_max_pages < max_pages) {
+//     chosen_max_pages = allowed_max_pages;
+//   }
+// #endif
 
-  void* addr = NULL;
-  const uint64_t retries = 10;
+//   void* addr = NULL;
+//   const uint64_t retries = 10;
 
-  for (uint64_t i = 0; i < retries; i++) {
-    addr = os_mmap_aligned(NULL, reserve_size, MMAP_PROT_NONE, MMAP_MAP_NONE, heap_alignment, 0 /* alignment_offset */);
-    if (addr) {
-      break;
-    }
-  }
+//   for (uint64_t i = 0; i < retries; i++) {
+//     addr = os_mmap_aligned(NULL, reserve_size, MMAP_PROT_NONE, MMAP_MAP_NONE, heap_alignment, 0 /* alignment_offset */);
+//     if (addr) {
+//       break;
+//     }
+//   }
 
-  if (!addr) {
-    perror("mmap failed");
-    abort();
-  }
-  int ret = os_mmap_commit(addr, byte_length, MMAP_PROT_READ | MMAP_PROT_WRITE);
-  if (ret != 0) {
-    abort();
-  }
-  // This is a valid way to initialize a constant field that is not undefined behavior
-  // https://stackoverflow.com/questions/9691404/how-to-initialize-const-in-a-struct-in-c-with-malloc
-  // Summary: malloc of a struct, followed by a write to the constant fields is still defined behavior iff
-  //   there is no prior read of the field
-  *(uint8_t**) &memory->data = addr;
+//   if (!addr) {
+//     perror("mmap failed");
+//     abort();
+//   }
+//   int ret = os_mmap_commit(addr, byte_length, MMAP_PROT_READ | MMAP_PROT_WRITE);
+//   if (ret != 0) {
+//     abort();
+//   }
+//   // This is a valid way to initialize a constant field that is not undefined behavior
+//   // https://stackoverflow.com/questions/9691404/how-to-initialize-const-in-a-struct-in-c-with-malloc
+//   // Summary: malloc of a struct, followed by a write to the constant fields is still defined behavior iff
+//   //   there is no prior read of the field
+//   *(uint8_t**) &memory->data = addr;
 
-  memory->size = byte_length;
-  memory->pages = initial_pages;
-  memory->max_pages = chosen_max_pages;
+//   memory->size = byte_length;
+//   memory->pages = initial_pages;
+//   memory->max_pages = chosen_max_pages;
 
-#if defined(WASM_CHECK_SHADOW_MEMORY)
-  wasm2c_shadow_memory_create(memory);
-#endif
-}
+// #if defined(WASM_CHECK_SHADOW_MEMORY)
+//   wasm2c_shadow_memory_create(memory);
+// #endif
+// }
 
-void wasm_rt_deallocate_memory(wasm_rt_memory_t* memory) {
-#if WASM_USING_GUARD_PAGES == 1
-  const size_t reserve_size = 0x200000000ull;
-#else
-  const size_t reserve_size = 0x800000ul;
-#endif
-  os_munmap(memory->data, reserve_size);
+// void wasm_rt_deallocate_memory(wasm_rt_memory_t* memory) {
+// #if WASM_USING_GUARD_PAGES == 1
+//   const size_t reserve_size = 0x200000000ull;
+// #else
+//   const size_t reserve_size = 0x800000ul;
+// #endif
+//   os_munmap(memory->data, reserve_size);
 
-#if defined(WASM_CHECK_SHADOW_MEMORY)
-  wasm2c_shadow_memory_destroy(memory);
-#endif
-}
+// #if defined(WASM_CHECK_SHADOW_MEMORY)
+//   wasm2c_shadow_memory_destroy(memory);
+// #endif
+// }
 
-uint32_t wasm_rt_grow_memory(wasm_rt_memory_t* memory, uint32_t delta) {
-  uint32_t old_pages = memory->pages;
-  uint32_t new_pages = memory->pages + delta;
-  if (new_pages == 0) {
-    return 0;
-  }
-  if (new_pages < old_pages || new_pages > memory->max_pages) {
-    return (uint32_t)-1;
-  }
-  uint32_t old_size = old_pages * WASM_PAGE_SIZE;
-  uint32_t new_size = new_pages * WASM_PAGE_SIZE;
-  uint32_t delta_size = delta * WASM_PAGE_SIZE;
+// uint32_t wasm_rt_grow_memory(wasm_rt_memory_t* memory, uint32_t delta) {
+//   uint32_t old_pages = memory->pages;
+//   uint32_t new_pages = memory->pages + delta;
+//   if (new_pages == 0) {
+//     return 0;
+//   }
+//   if (new_pages < old_pages || new_pages > memory->max_pages) {
+//     return (uint32_t)-1;
+//   }
+//   uint32_t old_size = old_pages * WASM_PAGE_SIZE;
+//   uint32_t new_size = new_pages * WASM_PAGE_SIZE;
+//   uint32_t delta_size = delta * WASM_PAGE_SIZE;
 
-  int ret = os_mmap_commit(memory->data + old_size, delta_size, MMAP_PROT_READ | MMAP_PROT_WRITE);
-  if (ret != 0) {
-    return (uint32_t)-1;
-  }
+//   int ret = os_mmap_commit(memory->data + old_size, delta_size, MMAP_PROT_READ | MMAP_PROT_WRITE);
+//   if (ret != 0) {
+//     return (uint32_t)-1;
+//   }
 
-#if WABT_BIG_ENDIAN
-  memmove(memory->data + new_size - old_size, memory->data, old_size);
-  memset(memory->data, 0, delta_size);
-#endif
-  memory->pages = new_pages;
-  memory->size = new_size;
-#if defined(WASM_CHECK_SHADOW_MEMORY)
-  wasm2c_shadow_memory_expand(memory);
-#endif
-  return old_pages;
-}
+// #if WABT_BIG_ENDIAN
+//   memmove(memory->data + new_size - old_size, memory->data, old_size);
+//   memset(memory->data, 0, delta_size);
+// #endif
+//   memory->pages = new_pages;
+//   memory->size = new_size;
+// #if defined(WASM_CHECK_SHADOW_MEMORY)
+//   wasm2c_shadow_memory_expand(memory);
+// #endif
+//   return old_pages;
+// }
 
 void wasm_rt_allocate_table(wasm_rt_table_t* table,
                             uint32_t elements,

@@ -236,11 +236,11 @@ void wasm_rt_cleanup_func_types(wasm_func_type_t** p_func_type_structs,
  *    // 1 initial page (65536 bytes), and a maximum of 2 pages.
  *    wasm_rt_allocate_memory(&my_memory, 1, 2);
  *  ``` */
-extern void wasm_rt_allocate_memory(wasm_rt_memory_t*,
-                                    uint32_t initial_pages,
-                                    uint32_t max_pages);
+// extern void wasm_rt_allocate_memory(wasm_rt_memory_t*,
+//                                     uint32_t initial_pages,
+//                                     uint32_t max_pages);
 
-extern void wasm_rt_deallocate_memory(wasm_rt_memory_t*);
+// extern void wasm_rt_deallocate_memory(wasm_rt_memory_t*);
 
 /** Grow a Memory object by `pages`, and return the previous page count. If
  * this new page count is greater than the maximum page count, the grow fails

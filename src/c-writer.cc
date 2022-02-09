@@ -1162,13 +1162,27 @@ void CWriter::WriteDataInitializers() {
     memory = module_->memories[0];
   }
 
-  Write(Newline(), "static void init_memory(wasm2c_sandbox_t* const sbx) ", OpenBrace());
-  if (memory && module_->num_memory_imports == 0) {
-    uint32_t max =
-        memory->page_limits.has_max ? memory->page_limits.max : 65536;
-      Write("wasm_rt_allocate_memory(&(sbx->", ExternalRef(memory->name), "), ",
-            memory->page_limits.initial, ", ", max, ");", Newline());
-  }
+  // Write(Newline(), "static void* set_linmem_ptr(wasm2c_sandbox_t* sbx) ", OpenBrace());
+  // if (memory && module_->num_memory_imports == 0) {
+  //   uint32_t max =
+  //       memory->page_limits.has_max ? memory->page_limits.max : 65536;
+  // Write("wave_set_linmem_ptr(&(sbx->", ExternalRef(memory->name), "));", Newline());
+      
+      // sbx->", ExternalRef(memory->name), " = wave_get_linmem_ptr();", Newline());
+  // }
+
+  Write(Newline(), "static void init_memory(wasm2c_sandbox_t* const sbx, void* linmem) ", OpenBrace());
+  // if (memory && module_->num_memory_imports == 0) {
+  //   uint32_t max =
+  //       memory->page_limits.has_max ? memory->page_limits.max : 65536;
+  //     Write("wasm_rt_allocate_memory(&(sbx->", ExternalRef(memory->name), "), ",
+  //           memory->page_limits.initial, ", ", max, ");", Newline());
+  // }
+  Write("*(uint8_t**) &(sbx->w2c_memory.data) = linmem;", Newline());
+  Write("sbx->w2c_memory.pages = 2;", Newline());
+  Write("sbx->w2c_memory.max_pages = 65536;", Newline());
+  Write("sbx->w2c_memory.size = 65536 * 2;", Newline());
+
   data_segment_index = 0;
   for (const DataSegment* data_segment : module_->data_segments) {
     Write("LOAD_DATA(sbx->", ExternalRef(memory->name), ", ");
@@ -1182,7 +1196,7 @@ void CWriter::WriteDataInitializers() {
   Write(CloseBrace(), Newline());
 
   Write(Newline(), "static void cleanup_memory(wasm2c_sandbox_t* const sbx) ", OpenBrace());
-  Write("wasm_rt_deallocate_memory(&(sbx->", ExternalRef(memory->name), "));", Newline());
+  //Write("wasm_rt_deallocate_memory(&(sbx->", ExternalRef(memory->name), "));", Newline());
   Write(CloseBrace(), Newline());
 }
 
@@ -1296,14 +1310,20 @@ void CWriter::WriteCallbackAddRemove() {
 }
 
 void CWriter::WriteInit() {
-  Write(Newline(), "static void* create_wasm2c_sandbox(wasm2c_rt_init_data *init_data) ", OpenBrace());
+  Write(Newline(), "void* create_wasm2c_sandbox(void* vmctx, void* linmem) ", OpenBrace());
   Write("wasm2c_sandbox_t* const sbx = (wasm2c_sandbox_t* const) calloc(sizeof(wasm2c_sandbox_t), 1);", Newline());
-  Write("init_memory(sbx);", Newline());
+
+  Write("init_memory(sbx, linmem);", Newline());
+  //Write("set_linmem_ptr(sbx);", Newline());
+  //   *(uint8_t**) &memory->data = addr;
+
+
   Write("init_func_types(sbx);", Newline());
   Write("init_globals(sbx);", Newline());
   Write("init_table(sbx);", Newline());
   
-  Write("sbx->wasi_data = wasm_rt_init_wasi(&(sbx->", GetMainMemoryName(), "), init_data);", Newline());
+  //Write("sbx->wasi_data = wasm_rt_init_wasi(&(sbx->", GetMainMemoryName(), "), init_data);", Newline());
+  Write("sbx->wasi_data = vmctx;", Newline());
   for (Var* var : module_->starts) {
     Write(ExternalRef(module_->GetFunc(*var)->name), "();", Newline());
   }
@@ -1315,23 +1335,23 @@ void CWriter::WriteInit() {
   Write("cleanup_memory(sbx);", Newline());
   Write("cleanup_func_types(sbx);", Newline());
   Write("cleanup_table(sbx);", Newline());
-  Write("wasm_rt_cleanup_wasi(sbx->wasi_data);", Newline());
+  //Write("wasm_rt_cleanup_wasi(sbx->wasi_data);", Newline());
   Write("free(sbx);", Newline());
   Write(CloseBrace(), Newline(), Newline());
 
-  Write("FUNC_EXPORT wasm2c_sandbox_funcs_t WASM_CURR_ADD_PREFIX(get_wasm2c_sandbox_info)() ", OpenBrace());
-  {
-    Write("wasm2c_sandbox_funcs_t ret;", Newline());
-    Write("ret.wasm_rt_sys_init = &wasm_rt_sys_init;", Newline());
-    Write("ret.create_wasm2c_sandbox = &create_wasm2c_sandbox;", Newline());
-    Write("ret.destroy_wasm2c_sandbox = &destroy_wasm2c_sandbox;", Newline());
-    Write("ret.lookup_wasm2c_nonfunc_export = &lookup_wasm2c_nonfunc_export;", Newline());
-    Write("ret.lookup_wasm2c_func_index = &lookup_wasm2c_func_index;", Newline());
-    Write("ret.add_wasm2c_callback = &add_wasm2c_callback;", Newline());
-    Write("ret.remove_wasm2c_callback = &remove_wasm2c_callback;", Newline());
-    Write("return ret;", Newline());
-  }
-  Write(CloseBrace(), Newline());
+  // Write("FUNC_EXPORT wasm2c_sandbox_funcs_t WASM_CURR_ADD_PREFIX(get_wasm2c_sandbox_info)() ", OpenBrace());
+  // {
+  //   Write("wasm2c_sandbox_funcs_t ret;", Newline());
+  //   Write("ret.wasm_rt_sys_init = &wasm_rt_sys_init;", Newline());
+  //   Write("ret.create_wasm2c_sandbox = &create_wasm2c_sandbox;", Newline());
+  //   Write("ret.destroy_wasm2c_sandbox = &destroy_wasm2c_sandbox;", Newline());
+  //   Write("ret.lookup_wasm2c_nonfunc_export = &lookup_wasm2c_nonfunc_export;", Newline());
+  //   Write("ret.lookup_wasm2c_func_index = &lookup_wasm2c_func_index;", Newline());
+  //   Write("ret.add_wasm2c_callback = &add_wasm2c_callback;", Newline());
+  //   Write("ret.remove_wasm2c_callback = &remove_wasm2c_callback;", Newline());
+  //   Write("return ret;", Newline());
+  // }
+  // Write(CloseBrace(), Newline());
 }
 
 void CWriter::WriteFuncs() {
