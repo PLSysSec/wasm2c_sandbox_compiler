@@ -180,8 +180,8 @@ int main(int argc, char const *argv[])
      * Create runtime_metadata struct and pass through to create_wasm2c_sandbox func
      * */
 
-    // TODO: maybe it makes sense to allow no fs access instead of default . ???
-    wasm2c_rt_init_data init_data = {".", "", 0, "", 0, "", NULL}; 
+    // Homedir defaults to null. We check that it was set after we've gotten args
+    wasm2c_rt_init_data init_data = {NULL, "", 0, "", 0, "", NULL}; 
 
     int c;
     while (1)
@@ -253,6 +253,12 @@ int main(int argc, char const *argv[])
       /* Detect the end of the options. */
       if (c == -1)
         break;
+    }
+
+    // The sandbox needs a homedir!
+    if (init_data.homedir == NULL) {
+    	printf("Error: need a --homedir argument");
+	exit(1);
     }
 
     init_data.argc = count_words(init_data.args);
