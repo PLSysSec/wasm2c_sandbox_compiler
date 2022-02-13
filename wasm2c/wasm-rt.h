@@ -20,8 +20,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <setjmp.h>
-#include <veriwasi.h>
-//#include <../../../../../veriwasi.h>
+#include <wave.h>
 
 
 #if defined(_WIN32)
