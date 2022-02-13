@@ -1116,8 +1116,8 @@ void CWriter::WriteGlobalInitializers() {
 
   Write(Newline(), "static void init_globals(wasm2c_sandbox_t* const sbx) ", OpenBrace());
 
+  Index global_index = 0;
   {
-    Index global_index = 0;
     for (const Global* global : module_->globals) {
       bool is_import = global_index < module_->num_global_imports;
       if (!is_import) {
@@ -1130,11 +1130,12 @@ void CWriter::WriteGlobalInitializers() {
     }
   }
 
+  if (global_index != 0)
   {
-    Index global_index = 0;
+    Index global_index2 = 0;
     std::string memory_name = GetMainMemoryName();
     for (const Global* global : module_->globals) {
-      bool is_import = global_index < module_->num_global_imports;
+      bool is_import = global_index2 < module_->num_global_imports;
       if (!is_import) {
         std::string global_name = GetGlobalName(global->name);
         std::string global_name_expr = "sbx->" + global_name;
@@ -1144,7 +1145,7 @@ void CWriter::WriteGlobalInitializers() {
         }
       }
 
-      ++global_index;
+      ++global_index2;
     }
   }
 
@@ -1285,12 +1286,18 @@ void CWriter::WriteDataInitializers() {
     ++data_segment_index;
   }
 
-  Write("sbx->wasi_data.heap_memory = &(sbx->", ExternalRef(memory->name), ");", Newline());
+  if (memory) {
+    Write("sbx->wasi_data.heap_memory = &(sbx->", ExternalRef(memory->name), ");", Newline());
+  } else {
+    Write("sbx->wasi_data.heap_memory = 0;", Newline());
+  }
   Write("return true;", Newline());
   Write(CloseBrace(), Newline());
 
   Write(Newline(), "static void cleanup_memory(wasm2c_sandbox_t* const sbx) ", OpenBrace());
-  Write("wasm_rt_deallocate_memory(&(sbx->", ExternalRef(memory->name), "));", Newline());
+  if (memory) {
+    Write("wasm_rt_deallocate_memory(&(sbx->", ExternalRef(memory->name), "));", Newline());
+  }
   Write(CloseBrace(), Newline());
 }
 
@@ -1335,7 +1342,9 @@ void CWriter::WriteElemInitializers() {
     }
     ++elem_segment_index;
   }
-  Write("sbx->", ExternalRef(table->name), "_current_index = offset + ", std::to_string(first_unused_elem), ";", Newline());
+  if (table){
+    Write("sbx->", ExternalRef(table->name), "_current_index = offset + ", std::to_string(first_unused_elem), ";", Newline());
+  }
   Write(CloseBrace(), Newline());
 
   Write(Newline(), "static void cleanup_table(wasm2c_sandbox_t* const sbx) ", OpenBrace());
@@ -1361,8 +1370,12 @@ void CWriter::WriteCallbackAddRemove() {
   const Table* table = module_->tables.empty() ? nullptr : module_->tables[0];
 
   Write(Newline(), "static wasm_rt_table_t* get_wasm2c_callback_table(void* sbx_ptr)", OpenBrace());
-  Write("wasm2c_sandbox_t* const sbx = (wasm2c_sandbox_t* const) sbx_ptr;", Newline());
-  Write("return &(sbx->", ExternalRef(table->name), ");", Newline());
+  if (table) {
+    Write("wasm2c_sandbox_t* const sbx = (wasm2c_sandbox_t* const) sbx_ptr;", Newline());
+    Write("return &(sbx->", ExternalRef(table->name), ");", Newline());
+  } else {
+    Write("return 0;", Newline());
+  }
   Write(CloseBrace(), Newline());
 }
 
@@ -1444,8 +1457,8 @@ void CWriter::Write(const Func& func) {
 
   Write(CloseBrace());
 
-  std::string memory_name = GetMainMemoryName();
   if (out_func_name == "w2c_dlmalloc") {
+    std::string memory_name = GetMainMemoryName();
     Write(Newline(), Newline());
     Write(GetFuncStaticOrExport(out_func_name), "u32 w2c_dlmalloc(wasm2c_sandbox_t* const sbx, u32 ptr_size) ", OpenBrace());
     Write("u32 ret = w2c_dlmalloc_wrapped(sbx, ptr_size);", Newline());
@@ -1454,6 +1467,7 @@ void CWriter::Write(const Func& func) {
     Write("return ret;", Newline());
     Write(CloseBrace());
   } else if (out_func_name == "w2c_dlfree") {
+    std::string memory_name = GetMainMemoryName();
     Write(Newline(), Newline());
     Write(GetFuncStaticOrExport(out_func_name), "void w2c_dlfree(wasm2c_sandbox_t* const sbx, u32 ptr) ", OpenBrace());
     Write("WASM2C_SHADOW_MEMORY_DLFREE(&(sbx->", memory_name, "), ptr);", Newline());
