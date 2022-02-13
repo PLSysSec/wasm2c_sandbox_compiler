@@ -371,7 +371,7 @@ static u32 add_wasm2c_callback(void* sbx_ptr, u32 func_type_idx, void* func_ptr,
       wasm_rt_expand_table(table);
     }
     if (table->data[i].func == 0) {
-      table->data[i] = (wasm_rt_elem_t){ func_class, func_type_idx, (wasm_rt_anyfunc_t) func_ptr };
+      table->data[i] = (wasm_rt_elem_t){ func_class, func_type_idx, (wasm_rt_funcref_t) func_ptr };
       return i;
     }
   }

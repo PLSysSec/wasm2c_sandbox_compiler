@@ -376,7 +376,7 @@ const char SECTION_NAME(sandboxapis)[] =
 "      wasm_rt_expand_table(table);\n"
 "    }\n"
 "    if (table->data[i].func == 0) {\n"
-"      table->data[i] = (wasm_rt_elem_t){ func_class, func_type_idx, (wasm_rt_anyfunc_t) func_ptr };\n"
+"      table->data[i] = (wasm_rt_elem_t){ func_class, func_type_idx, (wasm_rt_funcref_t) func_ptr };\n"
 "      return i;\n"
 "    }\n"
 "  }\n"
