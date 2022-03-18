@@ -135,7 +135,7 @@ net_triple parse_triple(char* triple){
     sscanf (port, "%u", &parsed_port);
 
     output.addr = parsed_addr;
-    output.port = parsed_port;
+    output.port = htons(parsed_port);
 
     return output;
 }
