@@ -1,6 +1,6 @@
 [![Build](https://github.com/PLSysSec/wasm2c_sandbox_compiler/actions/workflows/cmake.yml/badge.svg)](https://github.com/PLSysSec/wasm2c_sandbox_compiler/actions/workflows/cmake.yml)
 
-# WABT: The WebAssembly Binary Toolkit
+# Fork of wasm2c compiler adapted for library sandboxing
 
 WABT (we pronounce it "wabbit") is a suite of tools for WebAssembly, including:
 
