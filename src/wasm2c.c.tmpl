@@ -399,7 +399,7 @@ static void* create_wasm2c_sandbox(uint32_t max_wasm_pages) {
   init_table(sbx);
   wasm_rt_init_wasi(&(sbx->wasi_data));
   init_module_starts();
-  w2c___wasm_call_ctors(sbx);
+  // w2c___wasm_call_ctors(sbx);
   return sbx;
 }
 

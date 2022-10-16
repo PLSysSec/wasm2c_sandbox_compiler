@@ -404,7 +404,7 @@ const char SECTION_NAME(sandboxapis)[] =
 "  init_table(sbx);\n"
 "  wasm_rt_init_wasi(&(sbx->wasi_data));\n"
 "  init_module_starts();\n"
-"  w2c___wasm_call_ctors(sbx);\n"
+"  // w2c___wasm_call_ctors(sbx);\n"
 "  return sbx;\n"
 "}\n"
 "\n"
