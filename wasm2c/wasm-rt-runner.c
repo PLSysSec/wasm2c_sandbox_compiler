@@ -132,6 +132,8 @@ int main(int argc, char const* argv[]) {
       (wasm2c_start_func_t)symbol_lookup(library, "w2c__start");
   start_func(sandbox);
 
+  sandbox_info.destroy_wasm2c_sandbox(sandbox);
+
   free(info_func_name);
   close_lib(library);
   return 0;
