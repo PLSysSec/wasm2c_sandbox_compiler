@@ -5,6 +5,7 @@ WASI_SDK_ROOT=/opt/bin/wasi-sdk
 
 WABT_BIN_CHOICE=build_debug
 WABT_BIN_TYPE=Debug
+WASM_SECURITY_FLAGS=
 
 WABT_BIN_ROOT=$(WABT_SRC_ROOT)/$(WABT_BIN_CHOICE)
 
@@ -46,9 +47,9 @@ hello.wasm.c: hello.wasm $(WASM2C)
 	$(WASM2C) hello.wasm -o hello.wasm.c
 
 hello: hello.wasm.c $(WASM2C_RUNTIME_FILES)
-	$(CXX) -g -c $(WASM2C_SHADOW_RUNTIME_FILES) $(INCS)
-	$(CC)  -g -c hello.wasm.c $(WASM2C_RUNTIME_FILES) $(INCS)
-	$(CXX) -g *.o -o hello $(DEPS) $(LIBS)
+	$(CXX) -g -c $(WASM_SECURITY_FLAGS) $(WASM2C_SHADOW_RUNTIME_FILES) $(INCS)
+	$(CC)  -g -c $(WASM_SECURITY_FLAGS) hello.wasm.c $(WASM2C_RUNTIME_FILES) $(INCS)
+	$(CXX) -g $(WASM_SECURITY_FLAGS) *.o -o hello $(DEPS) $(LIBS)
 
 run: hello
 	$(PWD)/hello
