@@ -26,7 +26,7 @@ int main(int argc, char const* argv[]) {
     wasm_module_name = argv[1];
   }
 
-  wasi_rt_sys_init();
+  wasm_rt_sys_init();
 
   wasm2c_sandbox_funcs_t sandbox_info = get_wasm2c_sandbox_info();
 
