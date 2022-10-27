@@ -72,6 +72,11 @@ option(WERROR "Build with warnings as errors" OFF)
 # WASI support is still a work in progress.
 # Only a handful of syscalls are supported at this point.
 option(WITH_WASI "Build WASI support via uvwasi" OFF)
+option(WASM_USE_SEGMENT_ENABLE "Build with sandboxing that uses fs/gs segment" OFF)
+
+if (WASM_USE_SEGMENT_ENABLE)
+  add_compile_definitions(WASM_USE_SEGMENT)
+endif()
 
 if (MSVC)
   set(COMPILER_IS_CLANG 0)

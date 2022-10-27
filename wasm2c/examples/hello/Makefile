@@ -2,10 +2,11 @@ MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 MKFILE_DIR := $(dir $(MKFILE_PATH))
 WABT_SRC_ROOT=$(shell realpath $(MKFILE_DIR)/../../..)
 WASI_SDK_ROOT=/opt/bin/wasi-sdk
+WASI_SDK_ROOT=/home/shr/Code/HardwareIsolation/wasi-sdk
 
 WABT_BIN_CHOICE=build_debug
 WABT_BIN_TYPE=Debug
-WASM_SECURITY_FLAGS=
+WASM_SECURITY_FLAGS=-DWASM_USE_SEGMENT
 
 WABT_BIN_ROOT=$(WABT_SRC_ROOT)/$(WABT_BIN_CHOICE)
 

@@ -92,6 +92,37 @@ void WASM2C_MALLOC_FAIL_CALLBACK(u32 ptr_size);
 #  define MEMCHECK(mem, a, t) if (UNLIKELY((a) + sizeof(t) > mem->size)) { (void) TRAP(OOB); }
 #endif
 
+
+#ifdef WASM_USE_SEGMENT
+#  ifndef __SEG_GS
+#    error "No segment support"
+#  endif
+
+#define MEMCPY_GS(TYPE)                                         \
+static __attribute__((always_inline)) inline                    \
+void memcpyfromgs_##TYPE(TYPE* target, u32 index) {             \
+  TYPE __seg_gs * source = (TYPE __seg_gs *) (uintptr_t) index; \
+  *target = *source;                                            \
+}                                                               \
+static __attribute__((always_inline)) inline                    \
+void memcpytogs_##TYPE(u32 index, TYPE* source) {               \
+  TYPE __seg_gs * target = (TYPE __seg_gs *) (uintptr_t) index; \
+  *target = *source;                                            \
+}
+
+MEMCPY_GS(u8);
+MEMCPY_GS(s8);
+MEMCPY_GS(u16);
+MEMCPY_GS(s16);
+MEMCPY_GS(u32);
+MEMCPY_GS(s32);
+MEMCPY_GS(u64);
+MEMCPY_GS(s64);
+MEMCPY_GS(f32);
+MEMCPY_GS(f64);
+
+#endif
+
 #if defined(WASM_USE_GUARD_PAGES) && UINTPTR_MAX == 0xffffffff
 // on 32-bit platforms we have to mask memory access into range
 #  define MEM_ACCESS_REF(mem, addr) &mem->data[addr & mem->mem_mask]
@@ -145,7 +176,7 @@ static inline void load_data(void *dest, const void *src, size_t n) {
   WASM2C_SHADOW_MEMORY_STORE(&m, "GlobalDataLoad", o, s);       \
 }
 
-#define DEFINE_LOAD(name, t1, t2, t3)                                               \
+#define DEFINE_LOAD_NORMAL(name, t1, t2, t3)                                        \
   static inline t3 name(wasm_rt_memory_t* mem, u64 addr, const char* func_name) {   \
     MEMCHECK(mem, addr, t1);                                                        \
     t1 result;                                                                      \
@@ -154,13 +185,38 @@ static inline void load_data(void *dest, const void *src, size_t n) {
     return (t3)(t2)result;                                                          \
   }
 
-#define DEFINE_STORE(name, t1, t2)                                                            \
+#define DEFINE_STORE_NORMAL(name, t1, t2)                                                     \
   static inline void name(wasm_rt_memory_t* mem, u64 addr, t2 value, const char* func_name) { \
     MEMCHECK(mem, addr, t1);                                                                  \
     t1 wrapped = (t1)value;                                                                   \
     memcpy(MEM_ACCESS_REF(mem, addr), &wrapped, sizeof(t1));                                  \
     WASM2C_SHADOW_MEMORY_STORE(mem, func_name, addr, sizeof(t1));                             \
   }
+
+#define DEFINE_LOAD_GS(name, t1, t2, t3)                                            \
+  static inline t3 name(wasm_rt_memory_t* mem, u64 addr, const char* func_name) {   \
+    MEMCHECK(mem, addr, t1);                                                        \
+    t1 result;                                                                      \
+    memcpyfromgs_##t1(&result, addr);                                               \
+    WASM2C_SHADOW_MEMORY_LOAD(mem, func_name, addr, sizeof(t1));                    \
+    return (t3)(t2)result;                                                          \
+  }
+
+#define DEFINE_STORE_GS(name, t1, t2)                                                         \
+  static inline void name(wasm_rt_memory_t* mem, u64 addr, t2 value, const char* func_name) { \
+    MEMCHECK(mem, addr, t1);                                                                  \
+    t1 wrapped = (t1)value;                                                                   \
+    memcpytogs_##t1(addr, &wrapped);                                                          \
+    WASM2C_SHADOW_MEMORY_STORE(mem, func_name, addr, sizeof(t1));                             \
+  }
+#endif
+
+#ifdef WASM_USE_SEGMENT
+#  define DEFINE_LOAD DEFINE_LOAD_GS
+#  define DEFINE_STORE DEFINE_STORE_GS
+#else
+#  define DEFINE_LOAD DEFINE_LOAD_NORMAL
+#  define DEFINE_STORE DEFINE_STORE_NORMAL
 #endif
 
 DEFINE_LOAD(i32_load, u32, u32, u32);

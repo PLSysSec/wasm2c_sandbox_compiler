@@ -315,6 +315,13 @@ bool wasm_rt_allocate_memory(wasm_rt_memory_t* memory,
   *(uint32_t*)&memory->mem_mask = heap_reserve_size - 1;
 #endif
 
+#ifdef WASM_USE_SEGMENT
+  asm volatile("wrgsbase %0\n"
+    : /* writes */
+    : /* reads */  "r" (memory->data)
+  );
+#endif
+
 #if defined(WASM_CHECK_SHADOW_MEMORY)
   wasm2c_shadow_memory_create(memory);
 #endif
