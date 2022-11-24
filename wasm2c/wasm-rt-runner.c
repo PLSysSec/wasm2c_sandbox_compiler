@@ -112,7 +112,8 @@ int main(int argc, char const* argv[]) {
 
   void* library = open_lib(wasm2c_module_path);
 
-  wasi_rt_sys_init_t wasi_rt_sys_init = (wasi_rt_sys_init_t) symbol_lookup(library, "wasm_rt_sys_init");
+  wasi_rt_sys_init_t wasi_rt_sys_init =
+      (wasi_rt_sys_init_t)symbol_lookup(library, "wasm_rt_sys_init");
   wasi_rt_sys_init();
 
   char* info_func_name = get_info_func_name(wasm_module_name);

@@ -19,7 +19,6 @@ wasm2c_sandbox_funcs_t get_wasm2c_sandbox_info();
 void w2c__start(void* sbx);
 
 int main(int argc, char const* argv[]) {
-
   char const* wasm_module_name = "";
 
   if (argc >= 3) {

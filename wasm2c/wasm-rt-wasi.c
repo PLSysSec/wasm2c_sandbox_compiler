@@ -479,10 +479,11 @@ STUB_IMPORT_IMPL(u32,
                  Z_envZ___sys_getcwdZ_iii,
                  (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b),
                  EM_EACCES);
-STUB_IMPORT_IMPL(u32,
-                 Z_envZ___sys_ftruncate64Z_iiiii,
-                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c, u32 d),
-                 EM_EACCES);
+STUB_IMPORT_IMPL(
+    u32,
+    Z_envZ___sys_ftruncate64Z_iiiii,
+    (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c, u32 d),
+    EM_EACCES);
 STUB_IMPORT_IMPL(u32,
                  Z_envZ___sys_unlinkZ_ii,
                  (wasm_sandbox_wasi_data * wasi_data, u32 path),
@@ -499,10 +500,11 @@ STUB_IMPORT_IMPL(u32,
                  Z_envZ_pthread_mutexattr_destroyZ_ii,
                  (wasm_sandbox_wasi_data * wasi_data, u32 a),
                  0);
-STUB_IMPORT_IMPL(u32,
-                 Z_envZ_pthread_createZ_iiiii,
-                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c, u32 d),
-                 -1);
+STUB_IMPORT_IMPL(
+    u32,
+    Z_envZ_pthread_createZ_iiiii,
+    (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c, u32 d),
+    -1);
 STUB_IMPORT_IMPL(u32,
                  Z_envZ_pthread_joinZ_iii,
                  (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b),
@@ -602,137 +604,187 @@ STUB_IMPORT_IMPL(u32,
 #define WASI_PERM_ERROR 63
 #define WASI_DEFAULT_ERROR WASI_PERM_ERROR
 
-STUB_IMPORT_IMPL(u32,
-                 Z_wasi_snapshot_preview1Z_fd_adviseZ_iijji,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u64 b, u64 c, u32 d),
-                 WASI_DEFAULT_ERROR);
+STUB_IMPORT_IMPL(
+    u32,
+    Z_wasi_snapshot_preview1Z_fd_adviseZ_iijji,
+    (wasm_sandbox_wasi_data * wasi_data, u32 a, u64 b, u64 c, u32 d),
+    WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_fd_allocateZ_iijj,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u64 b, u64 c),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u64 b, u64 c),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_fd_datasyncZ_ii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_fd_fdstat_getZ_iii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_fd_fdstat_set_flagsZ_iii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_fd_fdstat_set_rightsZ_iijj,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u64 b, u64 c),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u64 b, u64 c),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_fd_filestat_getZ_iii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_fd_filestat_set_sizeZ_iij,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u64 b),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u64 b),
                  WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32,
-                 Z_wasi_snapshot_preview1Z_fd_filestat_set_timesZ_iijji,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u64 b, u64 c, u32 d),
-                 WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32,
-                 Z_wasi_snapshot_preview1Z_fd_preadZ_iiiiji,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c, u64 d, u32 e),
-                 WASI_DEFAULT_ERROR);
+STUB_IMPORT_IMPL(
+    u32,
+    Z_wasi_snapshot_preview1Z_fd_filestat_set_timesZ_iijji,
+    (wasm_sandbox_wasi_data * wasi_data, u32 a, u64 b, u64 c, u32 d),
+    WASI_DEFAULT_ERROR);
+STUB_IMPORT_IMPL(
+    u32,
+    Z_wasi_snapshot_preview1Z_fd_preadZ_iiiiji,
+    (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c, u64 d, u32 e),
+    WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_fd_prestat_dir_nameZ_iiii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c),
                  WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32,
-                 Z_wasi_snapshot_preview1Z_fd_pwriteZ_iiiiji,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c, u64 d, u32 e),
-                 WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32,
-                 Z_wasi_snapshot_preview1Z_fd_readdirZ_iiiiji,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c, u64 d, u32 e),
-                 WASI_DEFAULT_ERROR);
+STUB_IMPORT_IMPL(
+    u32,
+    Z_wasi_snapshot_preview1Z_fd_pwriteZ_iiiiji,
+    (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c, u64 d, u32 e),
+    WASI_DEFAULT_ERROR);
+STUB_IMPORT_IMPL(
+    u32,
+    Z_wasi_snapshot_preview1Z_fd_readdirZ_iiiiji,
+    (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c, u64 d, u32 e),
+    WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_fd_renumberZ_iii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_fd_syncZ_ii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_fd_tellZ_iii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_path_create_directoryZ_iiii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c),
                  WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32,
-                 Z_wasi_snapshot_preview1Z_path_filestat_getZ_iiiiii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c, u32 d, u32 e),
-                 WASI_DEFAULT_ERROR);
+STUB_IMPORT_IMPL(
+    u32,
+    Z_wasi_snapshot_preview1Z_path_filestat_getZ_iiiiii,
+    (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c, u32 d, u32 e),
+    WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_path_filestat_set_timesZ_iiiiijji,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c, u32 d, u64 e, u64 f, u32 g),
+                 (wasm_sandbox_wasi_data * wasi_data,
+                  u32 a,
+                  u32 b,
+                  u32 c,
+                  u32 d,
+                  u64 e,
+                  u64 f,
+                  u32 g),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_path_linkZ_iiiiiiii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c, u32 d, u32 e, u32 f, u32 g),
+                 (wasm_sandbox_wasi_data * wasi_data,
+                  u32 a,
+                  u32 b,
+                  u32 c,
+                  u32 d,
+                  u32 e,
+                  u32 f,
+                  u32 g),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_path_openZ_iiiiiijjii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c, u32 d, u32 e, u64 f, u64 g, u32 h, u32 i),
+                 (wasm_sandbox_wasi_data * wasi_data,
+                  u32 a,
+                  u32 b,
+                  u32 c,
+                  u32 d,
+                  u32 e,
+                  u64 f,
+                  u64 g,
+                  u32 h,
+                  u32 i),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_path_readlinkZ_iiiiiii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c, u32 d, u32 e, u32 f),
+                 (wasm_sandbox_wasi_data * wasi_data,
+                  u32 a,
+                  u32 b,
+                  u32 c,
+                  u32 d,
+                  u32 e,
+                  u32 f),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_path_remove_directoryZ_iiii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_path_renameZ_iiiiiii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c, u32 d, u32 e, u32 f),
+                 (wasm_sandbox_wasi_data * wasi_data,
+                  u32 a,
+                  u32 b,
+                  u32 c,
+                  u32 d,
+                  u32 e,
+                  u32 f),
                  WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32,
-                 Z_wasi_snapshot_preview1Z_path_symlinkZ_iiiiii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c, u32 d, u32 e),
-                 WASI_DEFAULT_ERROR);
+STUB_IMPORT_IMPL(
+    u32,
+    Z_wasi_snapshot_preview1Z_path_symlinkZ_iiiiii,
+    (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c, u32 d, u32 e),
+    WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_path_unlink_fileZ_iiii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c),
                  WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32,
-                 Z_wasi_snapshot_preview1Z_poll_oneoffZ_iiiii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c, u32 d),
-                 WASI_DEFAULT_ERROR);
+STUB_IMPORT_IMPL(
+    u32,
+    Z_wasi_snapshot_preview1Z_poll_oneoffZ_iiiii,
+    (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c, u32 d),
+    WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_proc_raiseZ_ii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_random_getZ_iii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_sched_yieldZ_iv,
-                 (wasm_sandbox_wasi_data* wasi_data),
+                 (wasm_sandbox_wasi_data * wasi_data),
                  WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_sock_recvZ_iiiiiii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c, u32 d, u32 e, u32 f),
+                 (wasm_sandbox_wasi_data * wasi_data,
+                  u32 a,
+                  u32 b,
+                  u32 c,
+                  u32 d,
+                  u32 e,
+                  u32 f),
                  WASI_DEFAULT_ERROR);
-STUB_IMPORT_IMPL(u32,
-                 Z_wasi_snapshot_preview1Z_sock_sendZ_iiiiii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b, u32 c, u32 d, u32 e),
-                 WASI_DEFAULT_ERROR);
+STUB_IMPORT_IMPL(
+    u32,
+    Z_wasi_snapshot_preview1Z_sock_sendZ_iiiiii,
+    (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b, u32 c, u32 d, u32 e),
+    WASI_DEFAULT_ERROR);
 STUB_IMPORT_IMPL(u32,
                  Z_wasi_snapshot_preview1Z_sock_shutdownZ_iii,
-                 (wasm_sandbox_wasi_data* wasi_data, u32 a, u32 b),
+                 (wasm_sandbox_wasi_data * wasi_data, u32 a, u32 b),
                  WASI_DEFAULT_ERROR);
 
 /////////////////////////////////////////////////////////////
