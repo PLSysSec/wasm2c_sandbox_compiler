@@ -207,9 +207,6 @@ else ()
       # wasm doesn't allow for x87 floating point math
       add_definitions(-msse2 -mfpmath=sse)
     endif ()
-    if (TARGET_ARCH STREQUAL "s390x")
-      add_definitions(-DWABT_BIG_ENDIAN=1)
-    endif ()
   endif ()
 endif ()
 

@@ -103,6 +103,14 @@
 #define PRIaddress PRIu64
 #define PRIoffset PRIzx
 
+#ifndef WABT_BIG_ENDIAN
+#  if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#    define WABT_BIG_ENDIAN 1
+#  elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#    define WABT_BIG_ENDIAN 0
+#  endif
+#endif
+
 namespace wabt {
 #if WABT_BIG_ENDIAN
   inline void MemcpyEndianAware(void *dst, const void *src, size_t dsize, size_t ssize, size_t doff, size_t soff, size_t len) {
