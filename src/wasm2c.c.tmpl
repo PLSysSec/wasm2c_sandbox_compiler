@@ -110,6 +110,14 @@ void WASM2C_MALLOC_FAIL_CALLBACK(u32 ptr_size);
 #define wasm_asm(X)
 #endif
 
+#ifndef WABT_BIG_ENDIAN
+#  if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#    define WABT_BIG_ENDIAN 1
+#  elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#    define WABT_BIG_ENDIAN 0
+#  endif
+#endif
+
 #if WABT_BIG_ENDIAN
 static inline void load_data(void *dest, const void *src, size_t n) {
   size_t i = 0;

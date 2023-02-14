@@ -146,7 +146,6 @@ TOOLS = {
             '%(in_file)s',
             '--bindir=%(bindir)s',
             '--no-error-cmdline',
-            '--cflags=-DWABT_BIG_ENDIAN=' + '01'[struct.pack('<h', *struct.unpack('=h', b'\x00\x01'))[0]],
             '-o',
             '%(out_dir)s',
         ]),
