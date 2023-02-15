@@ -148,8 +148,8 @@ static inline void load_data(void *dest, const void *src, size_t n) {
   static inline void name(wasm_rt_memory_t* mem, u64 addr, t2 value, const char* func_name) { \
     MEMCHECK(mem, addr, t1);                                                                  \
     t1 wrapped = (t1)value;                                                                   \
-    memcpy(MEM_ACCESS_REF(mem, mem->size - addr - sizeof(t1), &wrapped, sizeof(t1));          \
-    WASM2C_SHADOW_MEMORY_STORE(mem, func_name, mem->size - addr - sizeof(t1)), sizeof(t1));   \
+    memcpy(MEM_ACCESS_REF(mem, mem->size - addr - sizeof(t1)), &wrapped, sizeof(t1));         \
+    WASM2C_SHADOW_MEMORY_STORE(mem, func_name, mem->size - addr - sizeof(t1), sizeof(t1));    \
   }
 #else
 static inline void load_data(void *dest, const void *src, size_t n) {
