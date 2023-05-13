@@ -2,6 +2,10 @@
 
 # Fork of wasm2c compiler adapted for library sandboxing
 
+**Note** : Most of the changes in this fork of wasm2c adapted for library sandboxing have now been upstreamed to https://github.com/WebAssembly/wabt/
+This fork will no longer be supported going forward, and is preserved for archival purposes only.
+Projects such as [rlbox_wasm2c_sandbox](https://github.com/PLSysSec/rlbox_wasm2c_sandbox) which previously relied on this fork now use the upstream wasm2c.
+
 WABT (we pronounce it "wabbit") is a suite of tools for WebAssembly, including:
 
  - [**wat2wasm**](https://webassembly.github.io/wabt/doc/wat2wasm.1.html): translate from [WebAssembly text format](https://webassembly.github.io/spec/core/text/index.html) to the [WebAssembly binary format](https://webassembly.github.io/spec/core/binary/index.html)
